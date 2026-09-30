@@ -1,0 +1,68 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 200" width="400" height="200">
+  <defs>
+    <!-- Brand Gradient -->
+    <linearGradient id="primaryGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#0D9488" />
+      <stop offset="100%" stop-color="#0284C7" />
+    </linearGradient>
+
+    <!-- Glass Surface Gradient -->
+    <linearGradient id="cardGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#FFFFFF" stop-opacity="0.95" />
+      <stop offset="100%" stop-color="#F8FAFC" stop-opacity="0.8" />
+    </linearGradient>
+
+    <!-- Ambient Shadow -->
+    <filter id="ambientShadow" x="-10%" y="-10%" width="120%" height="130%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#0F172A" flood-opacity="0.08" />
+      <feDropShadow dx="0" dy="4" stdDeviation="6" flood-color="#0D9488" flood-opacity="0.12" />
+    </filter>
+
+    <!-- Pill Glow -->
+    <filter id="glowFilter" x="-30%" y="-30%" width="160%" height="160%">
+      <feDropShadow dx="0" dy="6" stdDeviation="10" flood-color="#14B8A6" flood-opacity="0.35" />
+    </filter>
+  </defs>
+
+  <!-- Background Canvas -->
+  <rect width="400" height="200" rx="16" fill="#F1F5F9" />
+
+  <!-- Floating Main Card with Multi-layer Shadow -->
+  <rect x="24" y="24" width="352" height="152" rx="16" fill="url(#cardGrad)" stroke="#E2E8F0" stroke-width="1.5" filter="url(#ambientShadow)" />
+
+  <!-- Brand Emblem Badge (Left) -->
+  <g transform="translate(48, 52)">
+    <!-- Outer Glow Ring -->
+    <circle cx="48" cy="48" r="44" fill="#F0FDFA" stroke="#CCFBF1" stroke-width="2" />
+    <!-- Gradient Inner Core -->
+    <circle cx="48" cy="48" r="36" fill="url(#primaryGrad)" filter="url(#glowFilter)" />
+    
+    <!-- Stylized Medical Cross & Helix -->
+    <rect x="43" y="28" width="10" height="40" rx="4" fill="#FFFFFF" />
+    <rect x="28" y="43" width="40" height="10" rx="4" fill="#FFFFFF" />
+    
+    <!-- Central Vital Dot -->
+    <circle cx="48" cy="48" r="3.5" fill="#0D9488" />
+  </g>
+
+  <!-- Typographic Branding & Details (Right) -->
+  <g transform="translate(164, 62)">
+    <!-- Pill Category Badge -->
+    <rect x="0" y="0" width="86" height="20" rx="10" fill="#CCFBF1" />
+    <text x="43" y="14" font-family="'Plus Jakarta Sans', sans-serif" font-size="10" font-weight="700" fill="#0F766E" letter-spacing="0.08em" text-anchor="middle">PHARMACY POS</text>
+
+    <!-- Headline Brand Title -->
+    <text x="0" y="46" font-family="'Plus Jakarta Sans', sans-serif" font-size="22" font-weight="700" fill="#0F172A" letter-spacing="-0.02em">
+      PharmaPulse <tspan fill="#0D9488">Pro</tspan>
+    </text>
+
+    <!-- Subtitle / Value Proposition -->
+    <text x="0" y="70" font-family="'Inter', sans-serif" font-size="12" font-weight="400" fill="#64748B">
+      Precision inventory, analytics &amp; dispensing
+    </text>
+
+    <!-- Status Indicator Pill -->
+    <circle cx="4" cy="94" r="3" fill="#16A34A" />
+    <text x="14" y="97" font-family="'Inter', sans-serif" font-size="11" font-weight="500" fill="#16A34A">System Operational • v2.4</text>
+  </g>
+</svg>
