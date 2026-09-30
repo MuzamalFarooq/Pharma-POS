@@ -47,7 +47,7 @@ export default function DashboardSidebar({ userRole }) {
     <aside className="w-64 bg-slate-900 text-slate-300 flex flex-col border-r border-slate-800 shrink-0 h-screen sticky top-0">
       {/* Brand Header */}
       <div className="h-16 px-5 flex items-center border-b border-slate-800 gap-3">
-        <div className="w-9 h-9 rounded-xl bg-gradient-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-slate-950 font-black shadow-md shadow-emerald-500/20">
+        <div className="w-9 h-9 rounded-xl bg-linear-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-slate-950 font-black shadow-md shadow-emerald-500/20">
           <Pill className="w-5 h-5" />
         </div>
         <div>
