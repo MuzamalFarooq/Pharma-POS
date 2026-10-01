@@ -1,47 +1,105 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" width="64" height="64">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
   <defs>
+    <!-- Background Gradient: Deep Obsidian Emerald -->
     <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#10b981" />
-      <stop offset="60%" stop-color="#059669" />
-      <stop offset="100%" stop-color="#047857" />
+      <stop offset="0%" stop-color="#021c17" />
+      <stop offset="50%" stop-color="#042f27" />
+      <stop offset="100%" stop-color="#011410" />
     </linearGradient>
-    <linearGradient id="pillTop" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#5eead4" />
-      <stop offset="100%" stop-color="#14b8a6" />
+
+    <!-- Inner Rim Stroke Gradient -->
+    <linearGradient id="rimGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#34d399" stop-opacity="0.6" />
+      <stop offset="40%" stop-color="#10b981" stop-opacity="0.2" />
+      <stop offset="100%" stop-color="#047857" stop-opacity="0.05" />
     </linearGradient>
-    <linearGradient id="pillBottom" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#065f46" />
-      <stop offset="100%" stop-color="#022c22" />
+
+    <!-- Central Ambient Glow -->
+    <radialGradient id="centerGlow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#10b981" stop-opacity="0.35" />
+      <stop offset="60%" stop-color="#0d9488" stop-opacity="0.15" />
+      <stop offset="100%" stop-color="#021c17" stop-opacity="0" />
+    </radialGradient>
+
+    <!-- Pill Top Gradient (Mint / Emerald) -->
+    <linearGradient id="pillTopGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#6ee7b7" />
+      <stop offset="45%" stop-color="#10b981" />
+      <stop offset="100%" stop-color="#059669" />
     </linearGradient>
-    <filter id="shadow" x="-15%" y="-15%" width="130%" height="130%">
-      <feDropShadow dx="0" dy="2" stdDeviation="1.5" flood-color="#022c22" flood-opacity="0.35" />
+
+    <!-- Pill Bottom Gradient (Electric Teal / Cyan) -->
+    <linearGradient id="pillBottomGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#14b8a6" />
+      <stop offset="55%" stop-color="#0d9488" />
+      <stop offset="100%" stop-color="#044e46" />
+    </linearGradient>
+
+    <!-- Pulse Line Gradient -->
+    <linearGradient id="pulseGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" stop-color="#2dd4bf" stop-opacity="0.4" />
+      <stop offset="25%" stop-color="#38bdf8" />
+      <stop offset="50%" stop-color="#ffffff" />
+      <stop offset="75%" stop-color="#34d399" />
+      <stop offset="100%" stop-color="#2dd4bf" stop-opacity="0.4" />
+    </linearGradient>
+
+    <!-- Capsule Drop Shadow -->
+    <filter id="capsuleShadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="12" stdDeviation="16" flood-color="#000000" flood-opacity="0.6" />
+      <feDropShadow dx="0" dy="4" stdDeviation="8" flood-color="#022c22" flood-opacity="0.5" />
+    </filter>
+
+    <!-- Pulse Glow Filter -->
+    <filter id="pulseGlow" x="-20%" y="-40%" width="140%" height="180%">
+      <feDropShadow dx="0" dy="0" stdDeviation="6" flood-color="#34d399" flood-opacity="0.8" />
+      <feDropShadow dx="0" dy="0" stdDeviation="12" flood-color="#06b6d4" flood-opacity="0.5" />
     </filter>
   </defs>
 
-  <!-- Squircle Base with high border contrast -->
-  <rect width="64" height="64" rx="16" fill="url(#bgGrad)" />
-  <rect x="1" y="1" width="62" height="62" rx="15" fill="none" stroke="#ffffff" stroke-opacity="0.28" stroke-width="1.5" />
+  <!-- Base Squircle -->
+  <rect width="512" height="512" rx="120" fill="url(#bgGrad)" />
+  <rect width="512" height="512" rx="120" fill="url(#centerGlow)" />
+  <rect x="6" y="6" width="500" height="500" rx="114" fill="none" stroke="url(#rimGrad)" stroke-width="6" />
 
-  <!-- Pharmacy Cross -->
-  <g filter="url(#shadow)">
-    <path d="M 25 9 C 25 7.3 26.3 6 28 6 L 36 6 C 37.7 6 39 7.3 39 9 L 39 25 L 55 25 C 56.7 25 58 26.3 58 28 L 58 36 C 58 37.7 56.7 39 55 39 L 39 39 L 39 55 C 39 56.7 37.7 58 36 58 L 28 58 C 26.3 58 25 56.7 25 55 L 25 39 L 9 39 C 7.3 39 6 37.7 6 36 L 6 28 C 6 26.3 7.3 25 9 25 L 25 25 Z" fill="#ffffff" />
+  <!-- Angled Pharmacy Capsule (tilted -45deg) -->
+  <g transform="translate(256,256) rotate(-45) translate(-256,-256)" filter="url(#capsuleShadow)">
+    <!-- Top Cap -->
+    <path d="M 176 186 C 176 141.8 211.8 106 256 106 C 300.2 106 336 141.8 336 186 L 336 252 L 176 252 Z" fill="url(#pillTopGrad)" />
+
+    <!-- Specular highlight on top cap -->
+    <ellipse cx="236" cy="160" rx="36" ry="16" transform="rotate(-20 236 160)" fill="#ffffff" opacity="0.35" />
+
+    <!-- Bottom Cap -->
+    <path d="M 176 260 L 336 260 L 336 326 C 336 370.2 300.2 406 256 406 C 211.8 406 176 370.2 176 326 Z" fill="url(#pillBottomGrad)" />
+
+    <!-- Sleek Center Separator Band -->
+    <rect x="174" y="252" width="164" height="8" rx="4" fill="#011410" opacity="0.6" />
   </g>
 
-  <!-- Angled Pharmacy Capsule with crisp outline -->
-  <g transform="translate(32,32) rotate(-45) translate(-32,-32)" filter="url(#shadow)">
-    <!-- Pill Container & Border -->
-    <rect x="22" y="15" width="20" height="34" rx="10" fill="#047857" stroke="#ffffff" stroke-width="1.5" />
-    
-    <!-- Top Half (Teal / Cyan) -->
-    <path d="M 23 25 C 23 19.5 27 16 32 16 C 37 16 41 19.5 41 25 L 41 31 L 23 31 Z" fill="url(#pillTop)" />
-    
-    <!-- Bottom Half (Deep Forest Emerald) -->
-    <path d="M 23 33 L 41 33 L 41 39 C 41 44.5 37 48 32 48 C 27 48 23 44.5 23 39 Z" fill="url(#pillBottom)" />
-    
-    <!-- Crisp White Divider Belt -->
-    <rect x="22" y="31" width="20" height="2" fill="#ffffff" />
-
-    <!-- Subtle Shine on Top -->
-    <ellipse cx="32" cy="22" rx="4" ry="2" fill="#ffffff" opacity="0.4" />
+  <!-- Dynamic Horizontal Pulse Line Overlaid Across Center -->
+  <g filter="url(#pulseGlow)">
+    <path
+      d="M 75 256 L 175 256 L 210 168 L 256 352 L 302 208 L 332 276 L 350 256 L 437 256"
+      fill="none"
+      stroke="url(#pulseGrad)"
+      stroke-width="26"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+    />
   </g>
+
+  <!-- Crisp Core of the Pulse Line -->
+  <path
+    d="M 75 256 L 175 256 L 210 168 L 256 352 L 302 208 L 332 276 L 350 256 L 437 256"
+    fill="none"
+    stroke="#ffffff"
+    stroke-width="14"
+    stroke-linecap="round"
+    stroke-linejoin="round"
+  />
+
+  <!-- Glowing Accent Dots at ends of the pulse -->
+  <circle cx="75" cy="256" r="9" fill="#38bdf8" />
+  <circle cx="437" cy="256" r="9" fill="#34d399" />
 </svg>

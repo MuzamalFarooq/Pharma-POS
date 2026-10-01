@@ -194,6 +194,7 @@ export default function SettingsClient({ organization, user, userRole }) {
                   <option value="EUR">EUR (€)</option>
                   <option value="GBP">GBP (£)</option>
                   <option value="CAD">CAD ($)</option>
+                  <option value="PKR">PKR (₨ / Rs)</option>
                 </select>
               </div>
             </div>

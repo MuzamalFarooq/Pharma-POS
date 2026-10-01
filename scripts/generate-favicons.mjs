@@ -1,4 +1,8 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+import fs from 'fs';
+import path from 'path';
+import sharp from 'sharp';
+
+const svgContent = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
   <defs>
     <!-- Background Gradient: Deep Obsidian Emerald -->
     <linearGradient id="bgGrad" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -102,4 +106,78 @@
   <!-- Glowing Accent Dots at ends of the pulse -->
   <circle cx="75" cy="256" r="9" fill="#38bdf8" />
   <circle cx="437" cy="256" r="9" fill="#34d399" />
-</svg>
+</svg>`;
+
+async function main() {
+  const rootDir = process.cwd();
+  const buf = Buffer.from(svgContent);
+
+  // Write SVG files
+  fs.writeFileSync(path.join(rootDir, 'public/icon.svg'), svgContent);
+  fs.writeFileSync(path.join(rootDir, 'app/icon.svg'), svgContent);
+  console.log('Saved SVG icon files');
+
+  // Generate PNGs
+  const p512 = await sharp(buf).resize(512, 512).png().toBuffer();
+  fs.writeFileSync(path.join(rootDir, 'public/icon-512.png'), p512);
+
+  const p192 = await sharp(buf).resize(192, 192).png().toBuffer();
+  fs.writeFileSync(path.join(rootDir, 'public/icon-192.png'), p192);
+
+  const p180 = await sharp(buf).resize(180, 180).png().toBuffer();
+  fs.writeFileSync(path.join(rootDir, 'public/apple-touch-icon.png'), p180);
+  fs.writeFileSync(path.join(rootDir, 'app/apple-icon.png'), p180);
+  console.log('Saved PNG icons');
+
+  // Generate ICO with multi-resolutions: 16x16, 32x32, 48x48
+  const p16 = await sharp(buf).resize(16, 16).png().toBuffer();
+  const p32 = await sharp(buf).resize(32, 32).png().toBuffer();
+  const p48 = await sharp(buf).resize(48, 48).png().toBuffer();
+
+  function buildIco(pngBuffers) {
+    const numImages = pngBuffers.length;
+    const headerSize = 6;
+    const dirEntrySize = 16;
+    let offset = headerSize + numImages * dirEntrySize;
+
+    const header = Buffer.alloc(headerSize);
+    header.writeUInt16LE(0, 0); // reserved
+    header.writeUInt16LE(1, 2); // ICO type 1 = icon
+    header.writeUInt16LE(numImages, 4);
+
+    const dirEntries = [];
+    const imageBuffers = [];
+
+    for (const { buf, size } of pngBuffers) {
+      const entry = Buffer.alloc(dirEntrySize);
+      entry.writeUInt8(size === 256 ? 0 : size, 0); // width
+      entry.writeUInt8(size === 256 ? 0 : size, 1); // height
+      entry.writeUInt8(0, 2); // color palette
+      entry.writeUInt8(0, 3); // reserved
+      entry.writeUInt16LE(1, 4); // color planes
+      entry.writeUInt16LE(32, 6); // bits per pixel
+      entry.writeUInt32LE(buf.length, 8); // image size
+      entry.writeUInt32LE(offset, 12); // image offset
+
+      dirEntries.push(entry);
+      imageBuffers.push(buf);
+      offset += buf.length;
+    }
+
+    return Buffer.concat([header, ...dirEntries, ...imageBuffers]);
+  }
+
+  const icoBuf = buildIco([
+    { buf: p16, size: 16 },
+    { buf: p32, size: 32 },
+    { buf: p48, size: 48 },
+  ]);
+
+  fs.writeFileSync(path.join(rootDir, 'public/favicon.ico'), icoBuf);
+  fs.writeFileSync(path.join(rootDir, 'app/favicon.ico'), icoBuf);
+  console.log('Saved ICO favicon files');
+
+  console.log('ALL PREMIUM FAVICONS GENERATED SUCCESSFULLY!');
+}
+
+main().catch(console.error);
