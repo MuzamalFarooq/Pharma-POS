@@ -107,11 +107,11 @@ export default async function DashboardPage() {
   }
 
   return (
-    <div className="space-y-8 pb-12">
+    <div className="space-y-6 sm:space-y-8 pb-12 w-full max-w-full min-w-0">
       {/* HEADER BAR */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-extrabold text-slate-900 tracking-tight">Pharmacy Operations Dashboard</h1>
+          <h1 className="text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">Pharmacy Operations Dashboard</h1>
           <p className="text-xs text-slate-500 mt-1">
             Real-time analytics for <strong className="text-slate-800">{organization?.name}</strong> • Active Branch:{' '}
             <strong className="text-slate-800">{branch?.name || 'All Branches'}</strong>
@@ -122,19 +122,19 @@ export default async function DashboardPage() {
         <div className="flex items-center gap-2 flex-wrap">
           <Link
             href="/pos"
-            className="px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md shadow-emerald-600/20 transition-all flex items-center gap-1.5"
+            className="px-3.5 sm:px-4 py-2 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md shadow-emerald-600/20 transition-all flex items-center gap-1.5"
           >
             <ShoppingCart className="w-4 h-4" /> New POS Sale
           </Link>
           <Link
             href="/medicines"
-            className="px-3.5 py-2 rounded-xl bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-semibold text-xs shadow-sm flex items-center gap-1"
+            className="px-3 py-2 rounded-xl bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-semibold text-xs shadow-sm flex items-center gap-1"
           >
             <Plus className="w-3.5 h-3.5" /> Add Medicine
           </Link>
           <Link
             href="/purchases"
-            className="px-3.5 py-2 rounded-xl bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-semibold text-xs shadow-sm flex items-center gap-1"
+            className="px-3 py-2 rounded-xl bg-white border border-slate-300 hover:bg-slate-50 text-slate-700 font-semibold text-xs shadow-sm flex items-center gap-1"
           >
             <Plus className="w-3.5 h-3.5" /> Create Purchase
           </Link>
@@ -142,8 +142,8 @@ export default async function DashboardPage() {
       </div>
 
       {/* METRIC CARDS GRID */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
+        <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Today's Revenue</span>
             <div className="p-2 rounded-xl bg-emerald-50 text-emerald-600">
@@ -151,12 +151,12 @@ export default async function DashboardPage() {
             </div>
           </div>
           <div>
-            <div className="text-2xl font-extrabold text-slate-900">{formatCurrency(todayRevenue, organization?.currency)}</div>
+            <div className="text-xl sm:text-2xl font-extrabold text-slate-900">{formatCurrency(todayRevenue, organization?.currency)}</div>
             <div className="text-[11px] text-slate-500 mt-0.5">{todaySales.length} Completed Invoices Today</div>
           </div>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+        <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Active Medicines</span>
             <div className="p-2 rounded-xl bg-teal-50 text-teal-600">
@@ -164,12 +164,12 @@ export default async function DashboardPage() {
             </div>
           </div>
           <div>
-            <div className="text-2xl font-extrabold text-slate-900">{totalMedicinesCount} Products</div>
+            <div className="text-xl sm:text-2xl font-extrabold text-slate-900">{totalMedicinesCount} Products</div>
             <div className="text-[11px] text-slate-500 mt-0.5">{allBatches.length} Inventory Batches</div>
           </div>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+        <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Low Stock Warnings</span>
             <div className={`p-2 rounded-xl ${lowStockBatches.length > 0 ? 'bg-amber-50 text-amber-600' : 'bg-slate-50 text-slate-400'}`}>
@@ -177,12 +177,12 @@ export default async function DashboardPage() {
             </div>
           </div>
           <div>
-            <div className="text-2xl font-extrabold text-amber-600">{lowStockBatches.length} Batches</div>
+            <div className="text-xl sm:text-2xl font-extrabold text-amber-600">{lowStockBatches.length} Batches</div>
             <div className="text-[11px] text-slate-500 mt-0.5">Below reorder min threshold</div>
           </div>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
+        <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
           <div className="flex items-center justify-between">
             <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Expiring / Expired</span>
             <div className={`p-2 rounded-xl ${expiringSoonBatches.length > 0 ? 'bg-rose-50 text-rose-600' : 'bg-slate-50 text-slate-400'}`}>
@@ -190,7 +190,7 @@ export default async function DashboardPage() {
             </div>
           </div>
           <div>
-            <div className="text-2xl font-extrabold text-rose-600">{expiringSoonBatches.length} Batches</div>
+            <div className="text-xl sm:text-2xl font-extrabold text-rose-600">{expiringSoonBatches.length} Batches</div>
             <div className="text-[11px] text-slate-500 mt-0.5">Expiring within 30-90 days</div>
           </div>
         </div>
@@ -198,20 +198,20 @@ export default async function DashboardPage() {
 
       <DashboardCharts chartData={last7DaysSales} currency={organization?.currency} />
 
-      <div className="grid lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
+        <div className="lg:col-span-2 bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6 space-y-4 min-w-0 w-full overflow-hidden">
           <div className="flex items-center justify-between">
             <div>
               <h2 className="text-base font-bold text-slate-900">Recent Sales & Invoices</h2>
               <p className="text-xs text-slate-500">Latest transactions generated at POS</p>
             </div>
             <Link href="/sales" className="text-xs font-bold text-emerald-600 hover:underline flex items-center gap-1">
-              View All Sales <ArrowRight className="w-3.5 h-3.5" />
+              View All <ArrowRight className="w-3.5 h-3.5" />
             </Link>
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs">
+          <div className="overflow-x-auto w-full">
+            <table className="w-full text-left text-xs min-w-[500px]">
               <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold uppercase tracking-wider">
                 <tr>
                   <th className="py-3 px-3">Sale Ref</th>
@@ -253,7 +253,7 @@ export default async function DashboardPage() {
         </div>
 
         <div className="space-y-6">
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6 space-y-4">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
                 <AlertTriangle className="w-4 h-4 text-amber-500" />
@@ -288,7 +288,7 @@ export default async function DashboardPage() {
             </Link>
           </div>
 
-          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
+          <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6 space-y-4">
             <div className="flex items-center justify-between border-b border-slate-100 pb-3">
               <div className="flex items-center gap-2">
                 <Clock className="w-4 h-4 text-rose-500" />

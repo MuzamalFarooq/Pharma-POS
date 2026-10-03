@@ -52,7 +52,7 @@ export default function FeaturesPage() {
         {details.map((item, idx) => {
           const Icon = item.icon;
           return (
-            <div key={idx} className="bg-white p-8 rounded-2xl border border-slate-200 shadow-sm flex items-start gap-4">
+            <div key={idx} className="bg-white p-5 sm:p-8 rounded-2xl border border-slate-200 shadow-sm flex items-start gap-4">
               <div className="p-3 bg-emerald-50 text-emerald-600 rounded-xl shrink-0">
                 <Icon className="w-6 h-6" />
               </div>

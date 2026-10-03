@@ -18,7 +18,7 @@ import {
   Loader2,
   Pill,
 } from 'lucide-react';
-import { formatCurrency, calculateExpiryStatus } from '@/lib/utils';
+import { formatCurrency, calculateExpiryStatus, cn } from '@/lib/utils';
 import { toast } from 'sonner';
 
 export default function POSClient({ initialMedicines = [], initialCustomers = [], organization, branch }) {
@@ -35,6 +35,7 @@ export default function POSClient({ initialMedicines = [], initialCustomers = []
 
   const [submitting, setSubmitting] = useState(false);
   const [invoiceModalData, setInvoiceModalData] = useState(null);
+  const [mobileTab, setMobileTab] = useState('catalog'); // 'catalog' | 'cart'
 
   // Auto focus search input on load
   useEffect(() => {
@@ -183,98 +184,157 @@ export default function POSClient({ initialMedicines = [], initialCustomers = []
   };
 
   return (
-    <div className="h-[calc(100vh-6rem)] flex flex-col md:flex-row gap-6">
-      {/* LEFT: MEDICINE CATALOG & SEARCH (60%) */}
-      <div className="flex-1 flex flex-col bg-white rounded-2xl border border-slate-200 shadow-sm p-4 overflow-hidden">
-        {/* Search Bar */}
-        <div className="relative mb-4">
-          <Search className="w-5 h-5 text-slate-400 absolute left-3.5 top-3" />
-          <input
-            ref={searchInputRef}
-            type="text"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            onKeyDown={handleKeyDown}
-            placeholder="Search medicine by name, generic, brand or scan barcode..."
-            className="w-full pl-11 pr-24 py-2.5 rounded-xl border border-slate-300 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none"
-          />
-          <div className="absolute right-3 top-2.5 flex items-center gap-1 text-[11px] font-mono text-slate-400 bg-slate-100 px-2 py-0.5 rounded">
-            <Barcode className="w-3.5 h-3.5 text-emerald-600" /> Scanner Ready
-          </div>
-        </div>
-
-        {/* Medicines Grid */}
-        <div className="flex-1 overflow-y-auto pr-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3.5">
-          {filteredMedicines.length === 0 ? (
-            <div className="col-span-full py-16 text-center text-slate-400 space-y-2">
-              <Pill className="w-10 h-10 mx-auto text-slate-300" />
-              <p className="text-sm font-semibold">No active medicines found matching "{searchTerm}"</p>
-            </div>
-          ) : (
-            filteredMedicines.map((med) => {
-              const activeBatch = med.batches[0]; // Earliest expiring batch
-              const totalStock = med.batches.reduce((acc, b) => acc + b.quantity, 0);
-
-              return (
-                <div
-                  key={med.id}
-                  className={`p-3.5 rounded-xl border transition-all flex flex-col justify-between ${
-                    totalStock > 0
-                      ? 'bg-slate-50/50 border-slate-200 hover:border-emerald-400 hover:bg-emerald-50/30'
-                      : 'bg-slate-100/60 border-slate-200 opacity-60'
-                  }`}
-                >
-                  <div className="space-y-1">
-                    <div className="flex items-start justify-between gap-1">
-                      <h3 className="font-bold text-xs text-slate-900 line-clamp-1">{med.name}</h3>
-                      {med.prescriptionRequired && (
-                        <span className="text-[9px] bg-amber-100 text-amber-800 font-bold px-1.5 py-0.5 rounded shrink-0">
-                          Rx
-                        </span>
-                      )}
-                    </div>
-                    <p className="text-[10px] text-slate-500 truncate">
-                      {med.genericName || med.brand || med.dosageForm || 'Medicine'}
-                    </p>
-                  </div>
-
-                  <div className="mt-3 pt-2 border-t border-slate-200/60 flex items-center justify-between">
-                    <div>
-                      <div className="text-sm font-extrabold text-emerald-700">
-                        {activeBatch ? formatCurrency(activeBatch.sellingPrice, organization.currency) : 'N/A'}
-                      </div>
-                      <div className="text-[10px] text-slate-500">
-                        Stock: <strong className={totalStock > 0 ? 'text-slate-800' : 'text-rose-600'}>{totalStock}</strong>
-                      </div>
-                    </div>
-
-                    <button
-                      onClick={() => activeBatch && addToCart(med, activeBatch)}
-                      disabled={!activeBatch || totalStock <= 0}
-                      className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-300 text-white font-bold text-xs flex items-center gap-1 shadow-sm transition-all"
-                    >
-                      <Plus className="w-3.5 h-3.5" /> Add
-                    </button>
-                  </div>
-                </div>
-              );
-            })
+    <div className="w-full max-w-full min-w-0 space-y-3">
+      {/* Mobile Mode Switcher (Medicines Catalog vs Order Checkout) */}
+      <div className="lg:hidden grid grid-cols-2 p-1 bg-slate-200/80 rounded-xl text-xs font-bold">
+        <button
+          onClick={() => setMobileTab('catalog')}
+          className={cn(
+            'py-2 px-3 rounded-lg text-center transition-all truncate',
+            mobileTab === 'catalog'
+              ? 'bg-white text-slate-900 shadow-xs'
+              : 'text-slate-600 hover:text-slate-900'
           )}
-        </div>
+        >
+          Medicines ({filteredMedicines.length})
+        </button>
+        <button
+          onClick={() => setMobileTab('cart')}
+          className={cn(
+            'py-2 px-3 rounded-lg text-center transition-all flex items-center justify-center gap-1.5 truncate',
+            mobileTab === 'cart'
+              ? 'bg-white text-emerald-700 shadow-xs'
+              : 'text-slate-600 hover:text-slate-900'
+          )}
+        >
+          <span>Cart ({cart.length})</span>
+          <span className="text-[11px] font-black text-emerald-600">• {formatCurrency(grandTotal, organization.currency)}</span>
+        </button>
       </div>
 
-      {/* RIGHT: CART & POS CHECKOUT (40%) */}
-      <div className="w-full md:w-[420px] bg-white rounded-2xl border border-slate-200 shadow-sm p-4 flex flex-col justify-between">
-        {/* Cart Header */}
-        <div className="flex items-center justify-between pb-3 border-b border-slate-200">
-          <div className="flex items-center gap-2">
-            <ShoppingCart className="w-5 h-5 text-emerald-600" />
-            <h2 className="font-extrabold text-sm text-slate-900">Current POS Order</h2>
+      <div className="min-h-[calc(100vh-8rem)] lg:h-[calc(100vh-6rem)] flex flex-col lg:flex-row gap-4 sm:gap-6 w-full max-w-full min-w-0 relative">
+        {/* LEFT: MEDICINE CATALOG & SEARCH */}
+        <div
+          className={cn(
+            'flex-1 flex-col bg-white rounded-2xl border border-slate-200 shadow-sm p-3.5 sm:p-4 overflow-hidden min-w-0 w-full',
+            mobileTab === 'catalog' ? 'flex' : 'hidden lg:flex'
+          )}
+        >
+          {/* Search Bar */}
+          <div className="relative mb-3 sm:mb-4">
+            <Search className="w-4 h-4 sm:w-5 sm:h-5 text-slate-400 absolute left-3 sm:left-3.5 top-3" />
+            <input
+              ref={searchInputRef}
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="Search medicine or scan barcode..."
+              className="w-full pl-9 sm:pl-11 pr-20 sm:pr-28 py-2 sm:py-2.5 rounded-xl border border-slate-300 text-xs sm:text-sm focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none"
+            />
+            <div className="absolute right-2 sm:right-3 top-2 sm:top-2.5 flex items-center gap-1 text-[10px] sm:text-[11px] font-mono text-slate-500 bg-slate-100 px-1.5 sm:px-2 py-0.5 rounded">
+              <Barcode className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+              <span className="hidden sm:inline">Scanner Ready</span>
+              <span className="sm:hidden">Ready</span>
+            </div>
           </div>
-          <span className="text-xs bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">
-            {cart.length} items
-          </span>
+
+          {/* Medicines Grid */}
+          <div className="flex-1 overflow-y-auto pr-1 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2.5 sm:gap-3.5">
+            {filteredMedicines.length === 0 ? (
+              <div className="col-span-full py-16 text-center text-slate-400 space-y-2">
+                <Pill className="w-10 h-10 mx-auto text-slate-300" />
+                <p className="text-sm font-semibold">No active medicines found matching "{searchTerm}"</p>
+              </div>
+            ) : (
+              filteredMedicines.map((med) => {
+                const activeBatch = med.batches[0]; // Earliest expiring batch
+                const totalStock = med.batches.reduce((acc, b) => acc + b.quantity, 0);
+
+                return (
+                  <div
+                    key={med.id}
+                    className={`p-3 rounded-xl border transition-all flex flex-col justify-between ${
+                      totalStock > 0
+                        ? 'bg-slate-50/50 border-slate-200 hover:border-emerald-400 hover:bg-emerald-50/30'
+                        : 'bg-slate-100/60 border-slate-200 opacity-60'
+                    }`}
+                  >
+                    <div className="space-y-1">
+                      <div className="flex items-start justify-between gap-1">
+                        <h3 className="font-bold text-xs text-slate-900 line-clamp-1">{med.name}</h3>
+                        {med.prescriptionRequired && (
+                          <span className="text-[9px] bg-amber-100 text-amber-800 font-bold px-1.5 py-0.5 rounded shrink-0">
+                            Rx
+                          </span>
+                        )}
+                      </div>
+                      <p className="text-[10px] text-slate-500 truncate">
+                        {med.genericName || med.brand || med.dosageForm || 'Medicine'}
+                      </p>
+                    </div>
+
+                    <div className="mt-3 pt-2 border-t border-slate-200/60 flex items-center justify-between">
+                      <div>
+                        <div className="text-sm font-extrabold text-emerald-700">
+                          {activeBatch ? formatCurrency(activeBatch.sellingPrice, organization.currency) : 'N/A'}
+                        </div>
+                        <div className="text-[10px] text-slate-500">
+                          Stock: <strong className={totalStock > 0 ? 'text-slate-800' : 'text-rose-600'}>{totalStock}</strong>
+                        </div>
+                      </div>
+
+                      <button
+                        onClick={() => activeBatch && addToCart(med, activeBatch)}
+                        disabled={!activeBatch || totalStock <= 0}
+                        className="px-3 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 disabled:bg-slate-300 text-white font-bold text-xs flex items-center gap-1 shadow-sm transition-all"
+                      >
+                        <Plus className="w-3.5 h-3.5" /> Add
+                      </button>
+                    </div>
+                  </div>
+                );
+              })
+            )}
+          </div>
+
+          {/* Mobile floating bar to jump to cart */}
+          {mobileTab === 'catalog' && cart.length > 0 && (
+            <div className="lg:hidden sticky bottom-0 pt-2 bg-gradient-to-t from-white via-white to-transparent">
+              <button
+                onClick={() => setMobileTab('cart')}
+                className="w-full py-2.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs flex items-center justify-between shadow-lg shadow-emerald-600/30 transition-all"
+              >
+                <div className="flex items-center gap-2">
+                  <ShoppingCart className="w-4 h-4" />
+                  <span>{cart.length} item{cart.length > 1 ? 's' : ''} in cart</span>
+                </div>
+                <div className="flex items-center gap-1.5">
+                  <span className="font-extrabold">{formatCurrency(grandTotal, organization.currency)}</span>
+                  <span className="text-[10px] bg-emerald-700 px-2 py-0.5 rounded-md uppercase tracking-wider">Review Order &rarr;</span>
+                </div>
+              </button>
+            </div>
+          )}
         </div>
+
+        {/* RIGHT: CART & POS CHECKOUT */}
+        <div
+          className={cn(
+            'w-full lg:w-[400px] xl:w-[420px] bg-white rounded-2xl border border-slate-200 shadow-sm p-3.5 sm:p-4 flex-col justify-between shrink-0 min-w-0',
+            mobileTab === 'cart' ? 'flex' : 'hidden lg:flex'
+          )}
+        >
+          {/* Cart Header */}
+          <div className="flex items-center justify-between pb-3 border-b border-slate-200">
+            <div className="flex items-center gap-2">
+              <ShoppingCart className="w-5 h-5 text-emerald-600 shrink-0" />
+              <h2 className="font-extrabold text-sm text-slate-900">Current POS Order</h2>
+            </div>
+            <span className="text-xs bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full shrink-0">
+              {cart.length} items
+            </span>
+          </div>
 
         {/* Customer Selector */}
         <div className="py-3 border-b border-slate-100">
@@ -363,12 +423,12 @@ export default function POSClient({ initialMedicines = [], initialCustomers = []
           </div>
 
           {/* Payment Method selector */}
-          <div className="grid grid-cols-4 gap-1 pt-1">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-1.5 pt-1">
             {['CASH', 'CARD', 'BANK_TRANSFER', 'OTHER'].map((pm) => (
               <button
                 key={pm}
                 onClick={() => setPaymentMethod(pm)}
-                className={`py-1.5 rounded text-[10px] font-bold uppercase transition-all ${
+                className={`py-1.5 px-1 rounded text-[10px] font-bold uppercase transition-all truncate text-center ${
                   paymentMethod === pm ? 'bg-slate-900 text-white' : 'bg-white text-slate-700 border border-slate-300 hover:bg-slate-100'
                 }`}
               >
@@ -394,8 +454,8 @@ export default function POSClient({ initialMedicines = [], initialCustomers = []
 
       {/* PRINTABLE RECEIPT MODAL */}
       {invoiceModalData && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 space-y-4 border border-slate-200 shadow-2xl">
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full max-h-[90vh] overflow-y-auto p-4 sm:p-6 space-y-4 border border-slate-200 shadow-2xl">
             <div className="flex items-center justify-between border-b pb-3">
               <h3 className="font-bold text-base text-slate-900">Official Pharmacy Invoice</h3>
               <button onClick={() => setInvoiceModalData(null)} className="text-slate-400 hover:text-slate-600">

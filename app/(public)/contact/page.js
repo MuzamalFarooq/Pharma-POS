@@ -6,14 +6,14 @@ export const metadata = {
 
 export default function ContactPage() {
   return (
-    <div className="py-12 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
+    <div className="py-8 sm:py-12 max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-8 sm:space-y-12">
       <div className="text-center space-y-3">
-        <h1 className="text-4xl font-extrabold text-slate-900">Get in Touch</h1>
-        <p className="text-slate-600 text-lg">Have questions about our Pharmacy SaaS platform or enterprise plans?</p>
+        <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900">Get in Touch</h1>
+        <p className="text-slate-600 text-base sm:text-lg">Have questions about our Pharmacy SaaS platform or enterprise plans?</p>
       </div>
 
-      <div className="grid md:grid-cols-2 gap-8">
-        <div className="bg-white p-8 rounded-2xl border border-slate-200 space-y-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+        <div className="bg-white p-5 sm:p-8 rounded-2xl border border-slate-200 space-y-6">
           <h2 className="text-xl font-bold text-slate-900">Send Us a Message</h2>
           <form className="space-y-4">
             <div>
@@ -34,7 +34,7 @@ export default function ContactPage() {
           </form>
         </div>
 
-        <div className="space-y-6 bg-slate-900 text-white p-8 rounded-2xl flex flex-col justify-between">
+        <div className="space-y-6 bg-slate-900 text-white p-5 sm:p-8 rounded-2xl flex flex-col justify-between">
           <div className="space-y-6">
             <h2 className="text-xl font-bold">Direct Support</h2>
             <div className="space-y-4 text-sm text-slate-300">

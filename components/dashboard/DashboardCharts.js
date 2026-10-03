@@ -4,8 +4,8 @@ import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianG
 
 export default function DashboardCharts({ chartData = [], currency = 'USD' }) {
   return (
-    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 space-y-4">
-      <div className="flex items-center justify-between">
+    <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6 space-y-4 min-w-0 w-full overflow-hidden">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
         <div>
           <h2 className="text-base font-bold text-slate-900">Revenue & Sales Trends</h2>
           <p className="text-xs text-slate-500">Daily sales performance over the past 7 days</p>
@@ -15,7 +15,7 @@ export default function DashboardCharts({ chartData = [], currency = 'USD' }) {
         </span>
       </div>
 
-      <div className="h-64 w-full pt-4">
+      <div className="h-64 w-full pt-4 min-w-0">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
             <defs>

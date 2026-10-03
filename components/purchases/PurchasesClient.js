@@ -124,8 +124,8 @@ export default function PurchasesClient({ initialPurchases = [], suppliers = [],
 
       {/* Table */}
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
+        <div className="overflow-x-auto w-full">
+          <table className="w-full text-left text-xs min-w-[700px]">
             <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold uppercase tracking-wider">
               <tr>
                 <th className="py-3.5 px-4">Purchase Ref</th>
@@ -170,8 +170,8 @@ export default function PurchasesClient({ initialPurchases = [], suppliers = [],
 
       {/* CREATE PURCHASE MODAL */}
       {showNewModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-          <div className="bg-white rounded-2xl max-w-2xl w-full p-6 space-y-4 border border-slate-200 shadow-2xl my-8">
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4 overflow-y-auto">
+          <div className="bg-white rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-4 sm:p-6 space-y-4 border border-slate-200 shadow-2xl my-auto">
             <div className="flex items-center justify-between border-b pb-3">
               <h3 className="font-bold text-base text-slate-900">Record New Supplier Shipment Purchase</h3>
               <button onClick={() => setShowNewModal(false)} className="text-slate-400 hover:text-slate-600">
@@ -180,7 +180,7 @@ export default function PurchasesClient({ initialPurchases = [], suppliers = [],
             </div>
 
             <form onSubmit={handleCreatePurchase} className="space-y-4 text-xs">
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-4">
                 <div>
                   <label className="block font-semibold text-slate-700 mb-1">Select Supplier *</label>
                   <select

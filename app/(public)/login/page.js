@@ -51,8 +51,8 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-[80vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-8 bg-white p-8 rounded-2xl border border-slate-200 shadow-xl">
+    <div className="min-h-[80vh] flex items-center justify-center py-6 sm:py-12 px-3.5 sm:px-6 lg:px-8 w-full max-w-full">
+      <div className="max-w-md w-full space-y-6 sm:space-y-8 bg-white p-5 sm:p-8 rounded-2xl border border-slate-200 shadow-xl">
         <div className="text-center space-y-2">
           <div className="w-12 h-12 rounded-xl bg-emerald-600 text-white flex items-center justify-center mx-auto shadow-md shadow-emerald-600/20">
             <Pill className="w-6 h-6" />
@@ -118,17 +118,17 @@ export default function LoginPage() {
           <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wider block text-center">
             Quick Multi-Tenant Demo Logins
           </span>
-          <div className="grid grid-cols-2 gap-2 text-xs">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs">
             <button
               onClick={() => fillQuickDemo('owner@citycare.com', 'Password123!')}
-              className="p-2 rounded bg-slate-50 hover:bg-emerald-50 border border-slate-200 text-slate-700 text-left font-medium"
+              className="p-2.5 rounded-xl bg-slate-50 hover:bg-emerald-50 border border-slate-200 text-slate-700 text-left font-medium transition-colors"
             >
               <div className="font-bold text-emerald-700">City Care Pharmacy</div>
               <div className="text-[10px] text-slate-500">Tenant A (Owner)</div>
             </button>
             <button
               onClick={() => fillQuickDemo('owner@medicoplus.com', 'Password123!')}
-              className="p-2 rounded bg-slate-50 hover:bg-teal-50 border border-slate-200 text-slate-700 text-left font-medium"
+              className="p-2.5 rounded-xl bg-slate-50 hover:bg-teal-50 border border-slate-200 text-slate-700 text-left font-medium transition-colors"
             >
               <div className="font-bold text-teal-700">Medico Plus</div>
               <div className="text-[10px] text-slate-500">Tenant B (Owner)</div>

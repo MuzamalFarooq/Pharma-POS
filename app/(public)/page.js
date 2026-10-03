@@ -124,84 +124,88 @@ export default function LandingPage() {
               </Link>
             </div>
 
-            <div className="flex items-center justify-center gap-8 text-xs font-semibold text-slate-500 pt-4">
-              <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-emerald-600" /> Instant Setup</span>
-              <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-emerald-600" /> No Credit Card Required</span>
-              <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-emerald-600" /> Isolated Tenant DB</span>
+            <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-8 text-xs font-semibold text-slate-500 pt-4">
+              <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" /> Instant Setup</span>
+              <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" /> No Credit Card Required</span>
+              <span className="flex items-center gap-1.5"><CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" /> Isolated Tenant DB</span>
             </div>
           </div>
 
           {/* DASHBOARD PREVIEW MOCKUP */}
-          <div className="mt-12 sm:mt-16 max-w-5xl mx-auto rounded-2xl border border-slate-300/80 bg-white p-3 shadow-2xl shadow-slate-900/10">
-            <div className="rounded-xl border border-slate-200 bg-slate-900 text-white p-4 sm:p-6 overflow-hidden space-y-6">
+          <div className="mt-8 sm:mt-16 max-w-5xl mx-auto rounded-2xl border border-slate-300/80 bg-white p-2 sm:p-3 shadow-2xl shadow-slate-900/10 w-full overflow-hidden">
+            <div className="rounded-xl border border-slate-200 bg-slate-900 text-white p-3.5 sm:p-6 overflow-hidden space-y-4 sm:space-y-6">
               {/* Mock Topbar */}
-              <div className="flex items-center justify-between pb-4 border-b border-slate-800">
-                <div className="flex items-center gap-3">
-                  <div className="w-3 h-3 rounded-full bg-rose-500" />
-                  <div className="w-3 h-3 rounded-full bg-amber-500" />
-                  <div className="w-3 h-3 rounded-full bg-emerald-500" />
-                  <span className="text-xs font-mono text-slate-400 ml-2">app.pharmapulse.com/dashboard</span>
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2.5 pb-3 sm:pb-4 border-b border-slate-800">
+                <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                  <div className="flex items-center gap-1.5 shrink-0">
+                    <div className="w-2.5 h-2.5 rounded-full bg-rose-500" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-amber-500" />
+                    <div className="w-2.5 h-2.5 rounded-full bg-emerald-500" />
+                  </div>
+                  <span className="text-[11px] sm:text-xs font-mono text-slate-400 truncate max-w-[200px] sm:max-w-none">
+                    app.pharmapulse.com/dashboard
+                  </span>
                 </div>
-                <div className="flex items-center gap-2">
-                  <span className="text-xs px-2.5 py-1 rounded bg-emerald-950 text-emerald-400 border border-emerald-800 font-medium">
-                    Tenant: City Care Pharmacy (Active)
+                <div className="flex items-center gap-2 shrink-0">
+                  <span className="text-[10px] sm:text-xs px-2 py-0.5 sm:px-2.5 sm:py-1 rounded bg-emerald-950 text-emerald-400 border border-emerald-800 font-medium truncate max-w-[220px]">
+                    Tenant: City Care (Active)
                   </span>
                 </div>
               </div>
 
               {/* Mock Metrics Row */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="bg-slate-800/80 p-4 rounded-lg border border-slate-700/60">
+              <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+                <div className="bg-slate-800/80 p-3.5 sm:p-4 rounded-lg border border-slate-700/60">
                   <span className="text-xs text-slate-400 font-medium">Today's Revenue</span>
-                  <div className="text-2xl font-bold text-emerald-400 mt-1">$2,840.50</div>
+                  <div className="text-xl sm:text-2xl font-bold text-emerald-400 mt-1">$2,840.50</div>
                   <span className="text-[10px] text-emerald-500 font-semibold">+14% vs yesterday</span>
                 </div>
-                <div className="bg-slate-800/80 p-4 rounded-lg border border-slate-700/60">
+                <div className="bg-slate-800/80 p-3.5 sm:p-4 rounded-lg border border-slate-700/60">
                   <span className="text-xs text-slate-400 font-medium">Total Sales (POS)</span>
-                  <div className="text-2xl font-bold text-white mt-1">142 Invoices</div>
+                  <div className="text-xl sm:text-2xl font-bold text-white mt-1">142 Invoices</div>
                   <span className="text-[10px] text-slate-400">Main Branch</span>
                 </div>
-                <div className="bg-slate-800/80 p-4 rounded-lg border border-slate-700/60">
+                <div className="bg-slate-800/80 p-3.5 sm:p-4 rounded-lg border border-slate-700/60">
                   <span className="text-xs text-slate-400 font-medium">Low Stock Alerts</span>
-                  <div className="text-2xl font-bold text-amber-400 mt-1">4 Medicines</div>
+                  <div className="text-xl sm:text-2xl font-bold text-amber-400 mt-1">4 Medicines</div>
                   <span className="text-[10px] text-amber-500">Reorder threshold</span>
                 </div>
-                <div className="bg-slate-800/80 p-4 rounded-lg border border-slate-700/60">
+                <div className="bg-slate-800/80 p-3.5 sm:p-4 rounded-lg border border-slate-700/60">
                   <span className="text-xs text-slate-400 font-medium">Expiring Soon (30d)</span>
-                  <div className="text-2xl font-bold text-rose-400 mt-1">2 Batches</div>
+                  <div className="text-xl sm:text-2xl font-bold text-rose-400 mt-1">2 Batches</div>
                   <span className="text-[10px] text-rose-400 font-semibold">Action required</span>
                 </div>
               </div>
 
               {/* Mock POS Preview */}
-              <div className="bg-slate-800/50 p-4 rounded-xl border border-slate-700/60 grid md:grid-cols-3 gap-4">
-                <div className="md:col-span-2 space-y-3">
+              <div className="bg-slate-800/50 p-3 sm:p-4 rounded-xl border border-slate-700/60 grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="md:col-span-2 space-y-3 min-w-0">
                   <div className="flex items-center justify-between">
-                    <span className="text-sm font-semibold text-slate-200">Live POS Quick Checkout</span>
-                    <span className="text-xs text-slate-400">Barcode Ready</span>
+                    <span className="text-xs sm:text-sm font-semibold text-slate-200">Live POS Quick Checkout</span>
+                    <span className="text-[11px] sm:text-xs text-slate-400">Barcode Ready</span>
                   </div>
-                  <div className="bg-slate-900 border border-slate-700 rounded-lg p-2.5 flex items-center gap-2 text-xs text-slate-400">
-                    <Search className="w-4 h-4 text-emerald-400" />
-                    <span>Search medicine by name or barcode (e.g. Amoxicillin, Panadol, 890123456...)...</span>
+                  <div className="bg-slate-900 border border-slate-700 rounded-lg p-2.5 flex items-center gap-2 text-xs text-slate-400 min-w-0">
+                    <Search className="w-4 h-4 text-emerald-400 shrink-0" />
+                    <span className="truncate">Search medicine by name or barcode (e.g. Amoxicillin, Panadol)...</span>
                   </div>
                   <div className="space-y-2 text-xs">
-                    <div className="p-2.5 rounded bg-slate-900/80 border border-slate-700 flex items-center justify-between">
-                      <div>
-                        <div className="font-semibold text-slate-200">Amoxicillin 500mg Caps (Batch B2026-01)</div>
-                        <div className="text-[11px] text-slate-400">Exp: Aug 2027 • Stock: 150 caps</div>
+                    <div className="p-2.5 rounded bg-slate-900/80 border border-slate-700 flex items-center justify-between gap-2">
+                      <div className="min-w-0">
+                        <div className="font-semibold text-slate-200 truncate">Amoxicillin 500mg Caps (Batch B2026-01)</div>
+                        <div className="text-[11px] text-slate-400 truncate">Exp: Aug 2027 • Stock: 150 caps</div>
                       </div>
-                      <div className="text-emerald-400 font-bold">$24.50</div>
+                      <div className="text-emerald-400 font-bold shrink-0">$24.50</div>
                     </div>
                   </div>
                 </div>
                 <div className="bg-slate-900 p-3.5 rounded-lg border border-slate-700 space-y-3 flex flex-col justify-between">
                   <div>
                     <span className="text-xs font-semibold text-slate-300">Cart Total</span>
-                    <div className="text-2xl font-bold text-white mt-1">$31.50</div>
+                    <div className="text-xl sm:text-2xl font-bold text-white mt-1">$31.50</div>
                     <div className="text-[10px] text-slate-400">Includes 5% Tax</div>
                   </div>
-                  <div className="py-2 bg-emerald-600 rounded text-center font-bold text-xs text-white">
-                    Complete & Print Invoice (CITY-INV-000001)
+                  <div className="py-2 px-2 bg-emerald-600 rounded text-center font-bold text-[11px] sm:text-xs text-white truncate">
+                    Complete & Print Invoice
                   </div>
                 </div>
               </div>

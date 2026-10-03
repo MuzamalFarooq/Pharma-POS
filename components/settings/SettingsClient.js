@@ -59,14 +59,14 @@ export default function SettingsClient({ organization, user, userRole }) {
         <p className="text-xs text-slate-500">Configure profile, tax rate, invoice sequences, and subscription plan</p>
       </div>
 
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 sm:p-8 space-y-6">
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-8 space-y-6">
         <form onSubmit={handleSubmit} className="space-y-6 text-xs">
           <div className="space-y-4">
             <h2 className="text-sm font-bold text-slate-900 uppercase tracking-wider flex items-center gap-2 border-b pb-2">
               <Building className="w-4 h-4 text-emerald-600" /> Pharmacy Profile & Licensing
             </h2>
 
-            <div className="grid sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div>
                 <label className="block font-semibold text-slate-700 mb-1">Pharmacy Name *</label>
                 <input
@@ -122,7 +122,7 @@ export default function SettingsClient({ organization, user, userRole }) {
               />
             </div>
 
-            <div className="grid sm:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
                 <label className="block font-semibold text-slate-700 mb-1">City *</label>
                 <input
@@ -159,7 +159,7 @@ export default function SettingsClient({ organization, user, userRole }) {
               <Settings className="w-4 h-4 text-emerald-600" /> Invoice & Financial Parameters
             </h2>
 
-            <div className="grid sm:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
                 <label className="block font-semibold text-slate-700 mb-1">Invoice Prefix (e.g. CITY-INV)</label>
                 <input
@@ -204,7 +204,7 @@ export default function SettingsClient({ organization, user, userRole }) {
             <button
               type="submit"
               disabled={submitting}
-              className="px-8 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md shadow-emerald-600/20 flex items-center gap-2"
+              className="w-full sm:w-auto px-8 py-3 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md shadow-emerald-600/20 flex items-center justify-center gap-2"
             >
               {submitting ? <Loader2 className="w-4 h-4 animate-spin" /> : <>Save Settings <Save className="w-4 h-4" /></>}
             </button>
@@ -213,13 +213,13 @@ export default function SettingsClient({ organization, user, userRole }) {
       </div>
 
       {/* SaaS Subscription Info */}
-      <div className="bg-slate-900 text-white rounded-2xl p-6 sm:p-8 space-y-4">
-        <div className="flex items-center justify-between">
+      <div className="bg-slate-900 text-white rounded-2xl p-5 sm:p-8 space-y-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
           <div className="flex items-center gap-2">
-            <CreditCard className="w-5 h-5 text-emerald-400" />
+            <CreditCard className="w-5 h-5 text-emerald-400 shrink-0" />
             <h3 className="font-bold text-base">SaaS Subscription & Billing Architecture</h3>
           </div>
-          <span className="px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-bold border border-emerald-500/30">
+          <span className="self-start sm:self-auto px-3 py-1 rounded-full bg-emerald-500/20 text-emerald-300 text-xs font-bold border border-emerald-500/30">
             {organization?.subscriptionPlan || 'PRO'} PLAN (Active)
           </span>
         </div>

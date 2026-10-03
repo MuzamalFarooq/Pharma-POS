@@ -63,8 +63,8 @@ export default function RegisterPage() {
   };
 
   return (
-    <div className="py-12 px-4 sm:px-6 lg:px-8 max-w-2xl mx-auto">
-      <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-xl space-y-8">
+    <div className="py-6 sm:py-12 px-3 sm:px-6 lg:px-8 max-w-2xl mx-auto w-full max-w-full">
+      <div className="bg-white p-4 sm:p-8 rounded-2xl border border-slate-200 shadow-xl space-y-6 sm:space-y-8 w-full overflow-hidden">
         <div className="text-center space-y-2">
           <div className="w-12 h-12 rounded-xl bg-emerald-600 text-white flex items-center justify-center mx-auto shadow-md shadow-emerald-600/20">
             <Pill className="w-6 h-6" />

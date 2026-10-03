@@ -41,13 +41,13 @@ export default function OnboardingPage() {
   };
 
   return (
-    <div className="max-w-3xl mx-auto py-8 space-y-8">
+    <div className="max-w-3xl mx-auto py-4 sm:py-8 space-y-6 sm:space-y-8">
       {/* ONBOARDING HEADER */}
       <div className="text-center space-y-2">
         <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-100 text-emerald-800 text-xs font-bold">
           <Sparkles className="w-3.5 h-3.5" /> Guided Setup Wizard
         </div>
-        <h1 className="text-3xl font-extrabold text-slate-900">Welcome to PharmaPulse</h1>
+        <h1 className="text-2xl sm:text-3xl font-extrabold text-slate-900">Welcome to PharmaPulse</h1>
         <p className="text-xs text-slate-500">Configure your pharmacy organization parameters before launching</p>
       </div>
 
@@ -75,7 +75,7 @@ export default function OnboardingPage() {
       </div>
 
       {/* STEP CONTENTS */}
-      <div className="bg-white p-8 rounded-2xl border border-slate-200 shadow-md space-y-6">
+      <div className="bg-white p-5 sm:p-8 rounded-2xl border border-slate-200 shadow-md space-y-6">
         {step === 1 && (
           <div className="space-y-4">
             <h2 className="text-lg font-bold text-slate-900 flex items-center gap-2">

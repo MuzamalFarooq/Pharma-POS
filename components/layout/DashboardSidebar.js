@@ -19,11 +19,12 @@ import {
   Settings,
   Sparkles,
   ChevronRight,
+  X,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { hasPermission, PERMISSIONS } from '@/lib/rbac';
 
-export default function DashboardSidebar({ userRole }) {
+export default function DashboardSidebar({ userRole, isOpen = false, onClose }) {
   const pathname = usePathname();
 
   const navItems = [
@@ -44,18 +45,36 @@ export default function DashboardSidebar({ userRole }) {
   ];
 
   return (
-    <aside className="w-64 bg-slate-900 text-slate-300 flex flex-col border-r border-slate-800 shrink-0 h-screen sticky top-0">
+    <aside
+      className={cn(
+        'bg-slate-900 text-slate-300 flex flex-col border-r border-slate-800 transition-transform duration-300 ease-in-out z-50',
+        'fixed inset-y-0 left-0 w-72 h-full shadow-2xl lg:shadow-none',
+        'lg:static lg:w-64 lg:h-screen lg:sticky lg:top-0 lg:translate-x-0 shrink-0',
+        isOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'
+      )}
+    >
       {/* Brand Header */}
-      <div className="h-16 px-5 flex items-center border-b border-slate-800 gap-3">
-        <div className="w-9 h-9 rounded-xl bg-linear-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-slate-950 font-black shadow-md shadow-emerald-500/20">
-          <Pill className="w-5 h-5" />
+      <div className="h-16 px-4 sm:px-5 flex items-center justify-between border-b border-slate-800 gap-3">
+        <div className="flex items-center gap-3">
+          <div className="w-9 h-9 rounded-xl bg-linear-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-slate-950 font-black shadow-md shadow-emerald-500/20">
+            <Pill className="w-5 h-5" />
+          </div>
+          <div>
+            <span className="font-extrabold text-base text-white tracking-tight block leading-none">
+              PharmaPulse
+            </span>
+            <span className="text-[10px] text-emerald-400 font-semibold tracking-wider uppercase">Cloud SaaS Platform</span>
+          </div>
         </div>
-        <div>
-          <span className="font-extrabold text-base text-white tracking-tight block leading-none">
-            PharmaPulse
-          </span>
-          <span className="text-[10px] text-emerald-400 font-semibold tracking-wider uppercase">Cloud SaaS Platform</span>
-        </div>
+
+        {/* Mobile Close Button */}
+        <button
+          onClick={onClose}
+          className="lg:hidden p-1.5 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+          aria-label="Close menu"
+        >
+          <X className="w-5 h-5" />
+        </button>
       </div>
 
       {/* Nav Menu */}
@@ -72,6 +91,7 @@ export default function DashboardSidebar({ userRole }) {
             <Link
               key={item.href}
               href={item.href}
+              onClick={onClose}
               className={cn(
                 'flex items-center justify-between px-3.5 py-2.5 rounded-xl text-xs font-semibold transition-all group',
                 isActive
@@ -97,6 +117,7 @@ export default function DashboardSidebar({ userRole }) {
       <div className="p-3 border-t border-slate-800 bg-slate-950/40">
         <Link
           href="/onboarding"
+          onClick={onClose}
           className="p-2.5 rounded-xl bg-slate-800/60 hover:bg-slate-800 border border-slate-700/60 flex items-center justify-between text-xs text-slate-300 transition-colors"
         >
           <div className="flex items-center gap-2">

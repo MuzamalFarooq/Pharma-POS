@@ -2,10 +2,17 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Building2, User, LogOut, Bell, ShieldCheck, ChevronDown, Check } from 'lucide-react';
+import { Building2, User, LogOut, Bell, ShieldCheck, ChevronDown, Check, Menu } from 'lucide-react';
 import { toast } from 'sonner';
 
-export default function DashboardHeader({ user, organization, branch, role, branches = [] }) {
+export default function DashboardHeader({
+  user,
+  organization,
+  branch,
+  role,
+  branches = [],
+  onOpenSidebar,
+}) {
   const router = useRouter();
   const [branchDropdownOpen, setBranchDropdownOpen] = useState(false);
   const [loggingOut, setLoggingOut] = useState(false);
@@ -51,32 +58,44 @@ export default function DashboardHeader({ user, organization, branch, role, bran
   };
 
   return (
-    <header className="h-16 bg-white border-b border-slate-200 px-6 flex items-center justify-between sticky top-0 z-40">
-      {/* Left: Organization & Active Branch Context */}
-      <div className="flex items-center gap-4">
-        <div className="flex items-center gap-2.5">
-          <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 font-black flex items-center justify-center text-xs border border-emerald-200">
+    <header className="h-16 bg-white border-b border-slate-200 px-3 sm:px-6 flex items-center justify-between sticky top-0 z-30 w-full max-w-full overflow-x-hidden shrink-0">
+      {/* Left: Hamburger menu + Organization & Active Branch Context */}
+      <div className="flex items-center gap-2 sm:gap-4 min-w-0">
+        {/* Mobile Hamburger Button */}
+        <button
+          onClick={onOpenSidebar}
+          className="lg:hidden p-2 -ml-1 rounded-xl text-slate-600 hover:text-slate-900 hover:bg-slate-100 transition-colors shrink-0"
+          aria-label="Open navigation menu"
+        >
+          <Menu className="w-5 h-5" />
+        </button>
+
+        <div className="flex items-center gap-2 sm:gap-2.5 min-w-0">
+          <div className="w-8 h-8 rounded-lg bg-emerald-100 text-emerald-700 font-black flex items-center justify-center text-xs border border-emerald-200 shrink-0">
             {organization?.name ? organization.name.substring(0, 2).toUpperCase() : 'PH'}
           </div>
-          <div>
-            <span className="font-bold text-sm text-slate-900 block leading-snug">
-              {organization?.name || 'Pharmacy Organization'}
+          <div className="min-w-0">
+            <span className="font-bold text-xs sm:text-sm text-slate-900 block leading-snug truncate max-w-[100px] xs:max-w-[140px] sm:max-w-[200px]">
+              {organization?.name || 'Pharmacy'}
             </span>
-            <span className="text-[10px] text-slate-500 font-mono">
+            <span className="hidden sm:block text-[10px] text-slate-500 font-mono truncate">
               Tenant ID: <span className="text-emerald-700 font-semibold">{organization?.code || 'TENANT'}</span>
             </span>
           </div>
         </div>
 
         {/* Branch Selector */}
-        <div className="relative">
+        <div className="relative shrink-0">
           <button
             onClick={() => setBranchDropdownOpen(!branchDropdownOpen)}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200/80 text-slate-700 text-xs font-semibold border border-slate-200 transition-colors"
+            className="flex items-center gap-1.5 sm:gap-2 px-2.5 sm:px-3 py-1.5 rounded-lg bg-slate-100 hover:bg-slate-200/80 text-slate-700 text-xs font-semibold border border-slate-200 transition-colors"
           >
-            <Building2 className="w-3.5 h-3.5 text-emerald-600" />
-            <span>Branch: <strong className="text-slate-900">{branch?.name || 'Main Branch'}</strong></span>
-            <ChevronDown className="w-3.5 h-3.5 text-slate-400" />
+            <Building2 className="w-3.5 h-3.5 text-emerald-600 shrink-0" />
+            <span className="truncate max-w-[80px] xs:max-w-[120px] sm:max-w-none">
+              <span className="hidden md:inline">Branch: </span>
+              <strong className="text-slate-900">{branch?.name || 'Main'}</strong>
+            </span>
+            <ChevronDown className="w-3.5 h-3.5 text-slate-400 shrink-0" />
           </button>
 
           {branchDropdownOpen && branches.length > 0 && (
@@ -100,20 +119,23 @@ export default function DashboardHeader({ user, organization, branch, role, bran
       </div>
 
       {/* Right: User Profile & Actions */}
-      <div className="flex items-center gap-4">
-        {/* Role Badge */}
-        <span className={`text-[10px] font-bold px-2.5 py-1 rounded-full border uppercase tracking-wider ${roleColors[role] || roleColors.STAFF}`}>
+      <div className="flex items-center gap-2 sm:gap-3 shrink-0 ml-2">
+        {/* Role Badge (hidden on smallest screens to prevent header squeezing) */}
+        <span className={`hidden sm:inline-flex text-[10px] font-bold px-2 py-0.5 rounded-full border uppercase tracking-wider ${roleColors[role] || roleColors.STAFF}`}>
           {role || 'STAFF'}
         </span>
 
         {/* User Card */}
-        <div className="flex items-center gap-3 pl-3 border-l border-slate-200">
-          <div className="w-8 h-8 rounded-full bg-slate-900 text-white font-bold flex items-center justify-center text-xs">
+        <div className="flex items-center gap-2 sm:gap-3 pl-2 sm:pl-3 border-l border-slate-200">
+          <div
+            className="w-8 h-8 rounded-full bg-slate-900 text-white font-bold flex items-center justify-center text-xs shrink-0"
+            title={`${user?.name} (${role})`}
+          >
             {user?.name ? user.name.substring(0, 1).toUpperCase() : 'U'}
           </div>
           <div className="hidden md:block">
             <span className="font-bold text-xs text-slate-900 block leading-snug">{user?.name}</span>
-            <span className="text-[10px] text-slate-500 block truncate max-w-[140px]">{user?.email}</span>
+            <span className="text-[10px] text-slate-500 block truncate max-w-[120px]">{user?.email}</span>
           </div>
 
           {/* Logout button */}
@@ -121,7 +143,7 @@ export default function DashboardHeader({ user, organization, branch, role, bran
             onClick={handleLogout}
             disabled={loggingOut}
             title="Sign out of pharmacy session"
-            className="p-2 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors ml-1"
+            className="p-1.5 sm:p-2 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 transition-colors"
           >
             <LogOut className="w-4 h-4" />
           </button>

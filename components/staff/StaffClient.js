@@ -74,7 +74,7 @@ export default function StaffClient({ initialMembers = [], branches = [], userRo
 
         <button
           onClick={() => setShowInviteModal(true)}
-          className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md flex items-center gap-1.5 self-start"
+          className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md flex items-center justify-center gap-1.5"
         >
           <Plus className="w-4 h-4" /> Add / Invite Staff Member
         </button>
@@ -94,8 +94,8 @@ export default function StaffClient({ initialMembers = [], branches = [], userRo
       </div>
 
       <div className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full text-left text-xs">
+        <div className="overflow-x-auto w-full">
+          <table className="w-full min-w-[680px] text-left text-xs">
             <thead className="bg-slate-50 border-b border-slate-200 text-slate-500 font-semibold uppercase tracking-wider">
               <tr>
                 <th className="py-3.5 px-4">Staff Member</th>
@@ -131,8 +131,8 @@ export default function StaffClient({ initialMembers = [], branches = [], userRo
       </div>
 
       {showInviteModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 space-y-4 border border-slate-200 shadow-2xl">
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-5 sm:p-6 space-y-4 border border-slate-200 shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b pb-3">
               <h3 className="font-bold text-base text-slate-900">Add Staff Account</h3>
               <button onClick={() => setShowInviteModal(false)} className="text-slate-400 hover:text-slate-600">

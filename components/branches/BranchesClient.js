@@ -55,15 +55,15 @@ export default function BranchesClient({ initialBranches = [] }) {
 
         <button
           onClick={() => setShowAddModal(true)}
-          className="px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md flex items-center gap-1.5 self-start"
+          className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-700 text-white font-bold text-xs shadow-md flex items-center justify-center gap-1.5"
         >
           <Plus className="w-4 h-4" /> Add Branch Location
         </button>
       </div>
 
-      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
         {branches.map((b) => (
-          <div key={b.id} className="bg-white p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4 relative">
+          <div key={b.id} className="bg-white p-5 sm:p-6 rounded-2xl border border-slate-200 shadow-sm space-y-4 relative">
             {b.isMain && (
               <span className="absolute top-4 right-4 text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded uppercase">
                 Main Store
@@ -79,7 +79,7 @@ export default function BranchesClient({ initialBranches = [] }) {
             <div className="space-y-1.5 text-xs text-slate-600 border-t pt-3">
               <div className="flex items-center gap-2">
                 <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0" />
-                <span>{b.address ? `${b.address}, ${b.city || ''}` : 'Address pending'}</span>
+                <span className="truncate">{b.address ? `${b.address}, ${b.city || ''}` : 'Address pending'}</span>
               </div>
               <div className="flex items-center gap-2">
                 <Phone className="w-3.5 h-3.5 text-slate-400 shrink-0" />
@@ -106,8 +106,8 @@ export default function BranchesClient({ initialBranches = [] }) {
       </div>
 
       {showAddModal && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4">
-          <div className="bg-white rounded-2xl max-w-md w-full p-6 space-y-4 border border-slate-200 shadow-2xl">
+        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-3 sm:p-4">
+          <div className="bg-white rounded-2xl max-w-md w-full p-5 sm:p-6 space-y-4 border border-slate-200 shadow-2xl max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between border-b pb-3">
               <h3 className="font-bold text-base text-slate-900">Add Pharmacy Branch Location</h3>
               <button onClick={() => setShowAddModal(false)} className="text-slate-400 hover:text-slate-600">
@@ -151,7 +151,7 @@ export default function BranchesClient({ initialBranches = [] }) {
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-2">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
                 <div>
                   <label className="block font-semibold text-slate-700 mb-1">Address</label>
                   <input

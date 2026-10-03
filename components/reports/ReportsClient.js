@@ -43,14 +43,14 @@ export default function ReportsClient({ sales = [], purchases = [], batches = []
 
         <button
           onClick={() => window.print()}
-          className="px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-md flex items-center gap-1.5 self-start"
+          className="w-full sm:w-auto px-4 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 text-white font-bold text-xs shadow-md flex items-center justify-center gap-1.5"
         >
           <Printer className="w-4 h-4" /> Export / Print Report
         </button>
       </div>
 
       {/* Summary Stat Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
         <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm space-y-2">
           <span className="text-xs font-semibold text-slate-500 uppercase">Gross Revenue</span>
           <div className="text-2xl font-extrabold text-emerald-600">{formatCurrency(totalRevenue, currency)}</div>
@@ -77,10 +77,10 @@ export default function ReportsClient({ sales = [], purchases = [], batches = []
       </div>
 
       {/* Report Tabs */}
-      <div className="flex gap-2 border-b border-slate-200 pb-2">
+      <div className="flex overflow-x-auto gap-2 border-b border-slate-200 pb-2 no-scrollbar">
         <button
           onClick={() => setReportType('SALES')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+          className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap shrink-0 transition-all ${
             reportType === 'SALES' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-slate-100 border'
           }`}
         >
@@ -88,7 +88,7 @@ export default function ReportsClient({ sales = [], purchases = [], batches = []
         </button>
         <button
           onClick={() => setReportType('TOP_MEDS')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+          className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap shrink-0 transition-all ${
             reportType === 'TOP_MEDS' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-slate-100 border'
           }`}
         >
@@ -96,7 +96,7 @@ export default function ReportsClient({ sales = [], purchases = [], batches = []
         </button>
         <button
           onClick={() => setReportType('PAYMENT')}
-          className={`px-4 py-2 rounded-xl text-xs font-bold transition-all ${
+          className={`px-4 py-2 rounded-xl text-xs font-bold whitespace-nowrap shrink-0 transition-all ${
             reportType === 'PAYMENT' ? 'bg-emerald-600 text-white shadow-sm' : 'bg-white text-slate-700 hover:bg-slate-100 border'
           }`}
         >
@@ -105,12 +105,12 @@ export default function ReportsClient({ sales = [], purchases = [], batches = []
       </div>
 
       {/* Report Content Table */}
-      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-6">
+      <div className="bg-white rounded-2xl border border-slate-200 shadow-sm p-4 sm:p-6">
         {reportType === 'SALES' && (
           <div className="space-y-4">
             <h3 className="font-bold text-sm text-slate-900">Completed Sales Breakdown</h3>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left text-xs">
+            <div className="overflow-x-auto w-full">
+              <table className="w-full min-w-[600px] text-left text-xs">
                 <thead className="bg-slate-50 border-b text-slate-500 font-semibold uppercase">
                   <tr>
                     <th className="py-3 px-3">Sale #</th>
@@ -155,7 +155,7 @@ export default function ReportsClient({ sales = [], purchases = [], batches = []
         {reportType === 'PAYMENT' && (
           <div className="space-y-4">
             <h3 className="font-bold text-sm text-slate-900">Revenue Distribution by Payment Channel</h3>
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               {Object.entries(paymentBreakdown).map(([pm, amt]) => (
                 <div key={pm} className="p-4 bg-slate-50 rounded-xl border space-y-1">
                   <span className="text-[10px] font-bold text-slate-400 uppercase">{pm}</span>

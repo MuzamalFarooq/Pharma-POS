@@ -14,8 +14,8 @@ export default function ForgotPasswordPage() {
   };
 
   return (
-    <div className="min-h-[70vh] flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-md w-full space-y-6 bg-white p-8 rounded-2xl border border-slate-200 shadow-xl text-center">
+    <div className="min-h-[70vh] flex items-center justify-center py-6 sm:py-12 px-3.5 sm:px-6 lg:px-8 w-full max-w-full">
+      <div className="max-w-md w-full space-y-6 bg-white p-5 sm:p-8 rounded-2xl border border-slate-200 shadow-xl text-center">
         <div className="w-12 h-12 rounded-xl bg-emerald-600 text-white flex items-center justify-center mx-auto shadow-md">
           <Pill className="w-6 h-6" />
         </div>

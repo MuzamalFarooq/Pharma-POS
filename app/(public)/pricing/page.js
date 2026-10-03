@@ -15,8 +15,8 @@ export default function PricingPage() {
         </p>
       </div>
 
-      <div className="grid lg:grid-cols-3 gap-8">
-        <div className="bg-white rounded-2xl border border-slate-200 p-8 flex flex-col justify-between shadow-sm">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
+        <div className="bg-white rounded-2xl border border-slate-200 p-5 sm:p-8 flex flex-col justify-between shadow-sm">
           <div className="space-y-6">
             <div>
               <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Starter</span>
@@ -36,7 +36,7 @@ export default function PricingPage() {
           </Link>
         </div>
 
-        <div className="bg-white rounded-2xl border-2 border-emerald-600 p-8 flex flex-col justify-between shadow-xl relative">
+        <div className="bg-white rounded-2xl border-2 border-emerald-600 p-5 sm:p-8 flex flex-col justify-between shadow-xl relative">
           <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-emerald-600 text-white text-[11px] font-bold px-3 py-1 rounded-full uppercase">
             Recommended
           </div>
@@ -63,7 +63,7 @@ export default function PricingPage() {
           </Link>
         </div>
 
-        <div className="bg-white rounded-2xl border border-slate-200 p-8 flex flex-col justify-between shadow-sm">
+        <div className="bg-white rounded-2xl border border-slate-200 p-5 sm:p-8 flex flex-col justify-between shadow-sm">
           <div className="space-y-6">
             <div>
               <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">Enterprise</span>
