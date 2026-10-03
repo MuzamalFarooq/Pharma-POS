@@ -451,6 +451,7 @@ export default function POSClient({ initialMedicines = [], initialCustomers = []
           </button>
         </div>
       </div>
+    </div>
 
       {/* PRINTABLE RECEIPT MODAL */}
       {invoiceModalData && (
