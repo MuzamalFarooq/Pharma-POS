@@ -14,9 +14,10 @@ export async function POST(req) {
     }
 
     const { email, password } = validated.data;
+    const identifier = email.toLowerCase().trim();
 
-    const user = await prisma.user.findUnique({
-      where: { email: email.toLowerCase().trim() },
+    let user = await prisma.user.findUnique({
+      where: { email: identifier },
       include: {
         memberships: {
           where: { status: 'ACTIVE' },
@@ -27,6 +28,23 @@ export async function POST(req) {
         },
       },
     });
+
+    if (!user && !identifier.includes('@')) {
+      user = await prisma.user.findFirst({
+        where: {
+          email: { startsWith: `${identifier}@`, mode: 'insensitive' },
+        },
+        include: {
+          memberships: {
+            where: { status: 'ACTIVE' },
+            include: {
+              organization: true,
+              branch: true,
+            },
+          },
+        },
+      });
+    }
 
     if (!user) {
       return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
