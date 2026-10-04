@@ -91,7 +91,7 @@ export default function LandingPage() {
   return (
     <div className="space-y-24 pb-20">
       {/* HERO SECTION */}
-      <section className="relative pt-12 lg:pt-20 overflow-hidden bg-gradient-to-b from-emerald-50/50 via-white to-slate-50 border-b border-slate-200/80">
+      <section className="relative pt-12 lg:pt-20 overflow-hidden bg-linear-to-b from-emerald-50/50 via-white to-slate-50 border-b border-slate-200/80">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center space-y-6 max-w-4xl mx-auto">
             <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-100/80 border border-emerald-200 text-emerald-800 text-xs font-semibold tracking-wide">
