@@ -51,15 +51,15 @@ export default function PublicFooter() {
             <ul className="space-y-3 text-sm text-slate-400">
               <li className="flex items-start gap-2">
                 <MapPin className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
-                <span>100 Technology Plaza, Suite 400, NY</span>
+                <span>Office 5, Main Boulevard, Block G-1, Johar Town, Lahore, Punjab, Pakistan.</span>
               </li>
               <li className="flex items-center gap-2">
                 <Phone className="w-4 h-4 text-emerald-500 shrink-0" />
-                <span>+1 (800) 555-PHARMA</span>
+                <span>+92 306 7774327</span>
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-emerald-500 shrink-0" />
-                <span>support@pharmapulse.com</span>
+                <span>muzamalfarooq111@gmail.com</span>
               </li>
             </ul>
           </div>
@@ -67,7 +67,7 @@ export default function PublicFooter() {
 
         <div className="mt-12 pt-8 border-t border-slate-800 flex flex-col md:flex-row items-center justify-between gap-4 text-xs text-slate-500">
           <p>© {new Date().getFullYear()} PharmaPulse SaaS. All rights reserved.</p>
-          <p>Built with Next.js, Auth, Zod & Prisma Architecture.</p>
+          <p>Al-farooq  Developers </p>
         </div>
       </div>
     </footer>

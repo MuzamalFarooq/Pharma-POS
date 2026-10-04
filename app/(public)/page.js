@@ -424,7 +424,7 @@ export default function LandingPage() {
 
       {/* FINAL CTA */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="rounded-3xl bg-gradient-to-r from-emerald-600 to-teal-700 text-white p-8 sm:p-12 text-center space-y-6 shadow-xl">
+        <div className="rounded-3xl bg-linear-to-r from-emerald-600 to-teal-700 text-white p-8 sm:p-12 text-center space-y-6 shadow-xl">
           <h2 className="text-3xl sm:text-4xl font-extrabold">Ready to Modernize Your Pharmacy Operations?</h2>
           <p className="text-emerald-100 text-base max-w-2xl mx-auto">
             Join hundreds of pharmacies operating seamlessly with PharmaPulse SaaS. Register today and get instant access to your dedicated dashboard.
