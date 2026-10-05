@@ -399,7 +399,7 @@ export default function LandingPage() {
                   SJ
                 </div>
                 <div>
-                  <div className="text-xs font-bold text-slate-900">Dr. Sarah Jenkins</div>
+                  <div className="text-xs font-bold text-slate-900">Dr. Sarah Muzamal</div>
                   <div className="text-[11px] text-slate-500">Chief Owner, City Care Pharmacy</div>
                 </div>
               </div>
@@ -413,7 +413,7 @@ export default function LandingPage() {
                   MC
                 </div>
                 <div>
-                  <div className="text-xs font-bold text-slate-900">Dr. Michael Chang</div>
+                  <div className="text-xs font-bold text-slate-900">Dr Hira rahman </div>
                   <div className="text-[11px] text-slate-500">Managing Director, Medico Plus Pharmacy</div>
                 </div>
               </div>
