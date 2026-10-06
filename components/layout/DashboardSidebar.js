@@ -34,6 +34,7 @@ export default function DashboardSidebar({ userRole, isOpen = false, onClose }) 
     { name: 'Inventory & Batches', href: '/inventory', icon: Package, permission: PERMISSIONS.INVENTORY_READ },
     { name: 'Purchases (Suppliers)', href: '/purchases', icon: ShoppingBag, permission: PERMISSIONS.PURCHASES_READ },
     { name: 'Sales Transactions', href: '/sales', icon: FileText, permission: PERMISSIONS.SALES_READ },
+    { name: 'Customer Orders', href: '/orders', icon: ShoppingBag, permission: PERMISSIONS.SALES_READ },
     { name: 'Invoices Generator', href: '/invoices', icon: Layers, permission: PERMISSIONS.SALES_READ },
     { name: 'Customers Ledger', href: '/customers', icon: Users, permission: PERMISSIONS.CUSTOMERS_READ },
     { name: 'Suppliers Directory', href: '/suppliers', icon: Building, permission: PERMISSIONS.SUPPLIERS_READ },

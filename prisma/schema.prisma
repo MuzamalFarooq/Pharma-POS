@@ -56,6 +56,15 @@ enum SaleStatus {
   CANCELLED
 }
 
+enum CustomerOrderStatus {
+  PENDING
+  CONFIRMED
+  PREPARING
+  READY_FOR_DELIVERY
+  DELIVERED
+  CANCELLED
+}
+
 enum InvoiceStatus {
   PAID
   UNPAID
@@ -116,6 +125,7 @@ model Organization {
   purchases              Purchase[]
   customers              Customer[]
   sales                  Sale[]
+  customerOrders         CustomerOrder[]
   invoices               Invoice[]
   notifications          Notification[]
   auditLogs              AuditLog[]
@@ -158,6 +168,7 @@ model Branch {
   inventoryTransactions InventoryTransaction[]
   purchases      Purchase[]
   sales          Sale[]
+  customerOrders CustomerOrder[]
   invoices       Invoice[]
 
   @@unique([organizationId, code])
@@ -201,6 +212,7 @@ model Medicine {
   inventoryTransactions  InventoryTransaction[]
   purchaseItems          PurchaseItem[]
   saleItems              SaleItem[]
+  customerOrderItems     CustomerOrderItem[]
 }
 
 model Supplier {
@@ -244,6 +256,7 @@ model MedicineBatch {
   supplier       Supplier?    @relation(fields: [supplierId], references: [id], onDelete: SetNull)
   inventoryTransactions InventoryTransaction[]
   saleItems      SaleItem[]
+  customerOrderItems CustomerOrderItem[]
 
   @@index([organizationId, branchId, expiryDate])
 }
@@ -270,18 +283,67 @@ model InventoryTransaction {
 model Customer {
   id             String       @id @default(cuid())
   organizationId String
+  userId         String?
   name           String
   phone          String?
   email          String?
   address        String?
   notes          String?
   totalSpent     Float        @default(0.0)
+  isActive       Boolean      @default(true)
   createdAt      DateTime     @default(now())
   updatedAt      DateTime     @updatedAt
 
   organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   sales          Sale[]
+  customerOrders CustomerOrder[]
   invoices       Invoice[]
+
+  @@index([organizationId, email])
+  @@index([organizationId, phone])
+}
+
+model CustomerOrder {
+  id             String               @id @default(cuid())
+  organizationId String
+  branchId       String
+  customerId     String?
+  customerName   String
+  customerPhone  String?
+  customerEmail  String?
+  deliveryAddress String?
+  notes          String?
+  subtotal       Float
+  deliveryFee    Float                @default(0)
+  total          Float
+  paymentMethod  String               @default("CASH_ON_DELIVERY")
+  status         CustomerOrderStatus  @default(PENDING)
+  createdAt      DateTime             @default(now())
+  updatedAt      DateTime             @updatedAt
+
+  organization   Organization         @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  branch         Branch               @relation(fields: [branchId], references: [id], onDelete: Cascade)
+  customer       Customer?            @relation(fields: [customerId], references: [id], onDelete: SetNull)
+  items          CustomerOrderItem[]
+
+  @@index([organizationId, branchId, createdAt])
+  @@index([organizationId, status])
+}
+
+model CustomerOrderItem {
+  id             String        @id @default(cuid())
+  orderId        String
+  medicineId     String
+  batchId        String
+  quantity       Int
+  unitPrice      Float
+  total          Float
+
+  order          CustomerOrder @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  medicine       Medicine      @relation(fields: [medicineId], references: [id], onDelete: Cascade)
+  batch          MedicineBatch @relation(fields: [batchId], references: [id], onDelete: Cascade)
+
+  @@index([orderId])
 }
 
 model Purchase {

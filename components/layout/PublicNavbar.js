@@ -6,13 +6,10 @@ import { useState, useEffect } from 'react';
 
 export default function PublicNavbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(false);
-
-  useEffect(() => {
-    if (typeof window !== 'undefined') {
-      setIsDarkMode(document.documentElement.classList.contains('dark'));
-    }
-  }, []);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return document.documentElement.classList.contains('dark');
+  });
 
   const toggleTheme = () => {
     if (typeof window !== 'undefined') {
@@ -24,8 +21,8 @@ export default function PublicNavbar() {
   const navLinks = [
     { name: 'Features', href: '/features' },
     { name: 'Pricing', href: '/pricing' },
-    { name: 'Docs', href: '/about' },
-    { name: 'Blog', href: '#blog' },
+    { name: 'Shop', href: '/shop' },
+    { name: 'My Orders', href: '/customer' },
     { name: 'Contact', href: '/contact' },
   ];
 

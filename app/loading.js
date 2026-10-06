@@ -16,7 +16,7 @@ export default function Loading() {
         {/* Animated Brand Emblem with Rotating Gradient Ring */}
         <div className="relative mb-6 flex items-center justify-center">
           {/* Rotating Outer Gradient Ring */}
-          <div className="absolute -inset-2 rounded-full bg-gradient-to-r from-emerald-500 via-teal-400 to-cyan-500 opacity-60 blur-[6px] animate-spin-slow" />
+          <div className="absolute -inset-2 rounded-full bg-linear-to-r from-emerald-500 via-teal-400 to-cyan-500 opacity-60 blur-[6px] animate-spin-slow" />
           
           <div className="absolute -inset-1.5 rounded-full bg-gradient-to-tr from-emerald-500/80 via-teal-400 to-cyan-400 p-[2px] animate-spin-slow">
             <div className="w-full h-full rounded-full bg-slate-950" />
