@@ -27,6 +27,10 @@ export async function POST(req) {
   const body = await req.json();
   const { organizationId, branchId } = body;
 
+  if (!session.activeOrganization) {
+    return NextResponse.json({ error: 'This account is not associated with a pharmacy organization' }, { status: 403 });
+  }
+
   const targetOrgId = organizationId || session.activeOrganization.id;
   const targetMember = session.memberships.find((m) => m.organizationId === targetOrgId);
 

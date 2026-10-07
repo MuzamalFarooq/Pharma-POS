@@ -56,10 +56,15 @@ export async function POST(req) {
     }
 
     if (!user.memberships || user.memberships.length === 0) {
-      return NextResponse.json(
-        { error: 'Your account is not associated with any active pharmacy organization' },
-        { status: 403 }
-      );
+      const token = await createSessionToken({ userId: user.id, role: 'CUSTOMER' });
+      await setSessionCookie(token);
+
+      return NextResponse.json({
+        success: true,
+        user: { id: user.id, name: user.name, email: user.email },
+        role: 'CUSTOMER',
+        redirect: '/customer',
+      });
     }
 
     const activeMembership = user.memberships[0];

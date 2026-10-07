@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Search, PackageCheck, Clock3, MapPin, ShoppingBag } from 'lucide-react';
 import { formatCurrency, formatDateTime } from '@/lib/utils';
 
@@ -9,6 +9,42 @@ export default function CustomerOrdersPage() {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadCustomerAccount = async () => {
+      try {
+        const sessionResponse = await fetch('/api/auth/me');
+        if (!sessionResponse.ok) return;
+
+        const sessionData = await sessionResponse.json();
+        if (sessionData.role !== 'CUSTOMER') return;
+
+        if (!cancelled) {
+          setForm((current) => ({ ...current, email: sessionData.user.email }));
+          setLoading(true);
+        }
+
+        const response = await fetch('/api/customer/orders');
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.error || 'Unable to load order history');
+        }
+
+        if (!cancelled) setOrders(data.orders || []);
+      } catch (err) {
+        if (!cancelled) setError(err.message || 'Unable to load order history');
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
+    };
+
+    loadCustomerAccount();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   const searchOrders = async (e) => {
     e.preventDefault();

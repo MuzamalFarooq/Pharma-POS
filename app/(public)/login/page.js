@@ -36,7 +36,7 @@ export default function LoginPage() {
       }
 
       toast.success(`Welcome back, ${data.user.name}!`);
-      router.push('/dashboard');
+      router.push(data.redirect || '/dashboard');
       router.refresh();
     } catch (error) {
       toast.error('An unexpected error occurred');
@@ -139,6 +139,13 @@ export default function LoginPage() {
         </div>
 
         <div className="text-center text-xs text-slate-500 pt-2">
+          Shopping with us?{' '}
+          <Link href="/customer/register" className="font-bold text-emerald-600 hover:underline">
+            Register as a customer
+          </Link>
+        </div>
+
+        <div className="text-center text-xs text-slate-500">
           Don't have a pharmacy account?{' '}
           <Link href="/register" className="font-bold text-emerald-600 hover:underline">
             Register your pharmacy

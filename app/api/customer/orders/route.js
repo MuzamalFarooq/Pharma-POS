@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { z } from 'zod';
 import prisma from '@/lib/db';
+import { getSession } from '@/lib/auth';
 
 const customerOrderItemSchema = z.object({
   medicineId: z.string().min(1),
@@ -26,9 +27,13 @@ const normalizeContactDetail = (value) => {
 
 export async function GET(request) {
   try {
+    const session = await getSession();
+    const accountCustomer = session?.role === 'CUSTOMER' ? session.user : null;
     const { searchParams } = new URL(request.url);
-    const customerEmail = normalizeContactDetail(searchParams.get('customerEmail'));
-    const customerPhone = normalizeContactDetail(searchParams.get('customerPhone'));
+    const customerEmail = accountCustomer
+      ? normalizeContactDetail(accountCustomer.email)
+      : normalizeContactDetail(searchParams.get('customerEmail'));
+    const customerPhone = accountCustomer ? null : normalizeContactDetail(searchParams.get('customerPhone'));
 
     if (!customerEmail && !customerPhone) {
       return NextResponse.json({ error: 'Please provide an email or phone number.' }, { status: 400 });
@@ -81,6 +86,10 @@ export async function POST(request) {
     }
 
     const { branchId, customerName, customerPhone, customerEmail, deliveryAddress, notes, paymentMethod, items } = validated.data;
+    const session = await getSession();
+    const accountCustomer = session?.role === 'CUSTOMER' ? session.user : null;
+    const orderCustomerName = accountCustomer?.name || customerName;
+    const orderCustomerEmail = accountCustomer?.email || customerEmail;
 
     const branch = await prisma.branch.findUnique({
       where: { id: branchId },
@@ -92,17 +101,21 @@ export async function POST(request) {
     }
 
     const normalizedPhone = customerPhone ? customerPhone.replace(/\s+/g, '').replace(/[^\d+]/g, '') : null;
-    const normalizedEmail = customerEmail ? customerEmail.toLowerCase().trim() : null;
+    const normalizedEmail = orderCustomerEmail ? orderCustomerEmail.toLowerCase().trim() : null;
 
     let customer = null;
     if (normalizedPhone || normalizedEmail) {
       customer = await prisma.customer.findFirst({
         where: {
           organizationId: branch.organizationId,
-          OR: [
-            ...(normalizedPhone ? [{ phone: { equals: normalizedPhone, mode: 'insensitive' } }] : []),
-            ...(normalizedEmail ? [{ email: { equals: normalizedEmail, mode: 'insensitive' } }] : []),
-          ],
+          ...(accountCustomer
+            ? { email: { equals: normalizedEmail, mode: 'insensitive' } }
+            : {
+                OR: [
+                  ...(normalizedPhone ? [{ phone: { equals: normalizedPhone, mode: 'insensitive' } }] : []),
+                  ...(normalizedEmail ? [{ email: { equals: normalizedEmail, mode: 'insensitive' } }] : []),
+                ],
+              }),
         },
       });
 
@@ -110,11 +123,12 @@ export async function POST(request) {
         customer = await prisma.customer.create({
           data: {
             organizationId: branch.organizationId,
-            name: customerName,
+            name: orderCustomerName,
             phone: normalizedPhone,
             email: normalizedEmail,
             address: deliveryAddress,
             notes,
+            userId: accountCustomer?.id || null,
           },
         });
       }
@@ -151,7 +165,7 @@ export async function POST(request) {
         organizationId: branch.organizationId,
         branchId,
         customerId: customer?.id || null,
-        customerName,
+        customerName: orderCustomerName,
         customerPhone: normalizedPhone,
         customerEmail: normalizedEmail,
         deliveryAddress,

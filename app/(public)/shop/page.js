@@ -60,6 +60,27 @@ export default function CustomerShopPage() {
   }, []);
 
   useEffect(() => {
+    const loadCustomerAccount = async () => {
+      try {
+        const response = await fetch('/api/auth/me');
+        if (!response.ok) return;
+        const data = await response.json();
+        if (data.role === 'CUSTOMER') {
+          setCustomerDetails((current) => ({
+            ...current,
+            name: data.user.name,
+            email: data.user.email,
+          }));
+        }
+      } catch (error) {
+        console.error('Unable to load customer account details:', error);
+      }
+    };
+
+    loadCustomerAccount();
+  }, []);
+
+  useEffect(() => {
     if (!selectedBranchId) return;
 
     const fetchMedicines = async () => {
