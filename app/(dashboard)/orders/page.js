@@ -1,12 +1,14 @@
+import { notFound } from 'next/navigation';
 import { getTenantContext } from '@/lib/tenant';
 import prisma from '@/lib/db';
 import OrdersClient from '@/components/orders/OrdersClient';
+import { PERMISSIONS } from '@/lib/rbac';
 
 export const dynamic = 'force-dynamic';
 
 export default async function CustomerOrdersDashboardPage() {
-  const tenant = await getTenantContext();
-  if (tenant.error) return null;
+  const tenant = await getTenantContext(PERMISSIONS.SALES_CREATE);
+  if (tenant.error) notFound();
 
   const orders = await prisma.customerOrder.findMany({
     where: { organizationId: tenant.organizationId },

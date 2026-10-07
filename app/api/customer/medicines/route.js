@@ -1,74 +1,128 @@
 import { NextResponse } from 'next/server';
+import { z } from 'zod';
 import prisma from '@/lib/db';
+
+const catalogQuerySchema = z.object({
+  branchId: z.string().min(1).optional(),
+  search: z.string().trim().max(100).optional().default(''),
+  categoryId: z.string().min(1).optional(),
+  page: z.coerce.number().int().min(1).max(10000).optional().default(1),
+});
+
+const PAGE_SIZE = 50;
 
 export async function GET(request) {
   try {
-    const { searchParams } = new URL(request.url);
-    const branchId = searchParams.get('branchId');
-    const organizationId = searchParams.get('organizationId');
-    const search = searchParams.get('search')?.trim() || '';
+    const query = catalogQuerySchema.safeParse(Object.fromEntries(new URL(request.url).searchParams));
+    if (!query.success) {
+      return NextResponse.json({ error: 'Invalid catalog filters' }, { status: 400 });
+    }
 
-    let selectedBranch = null;
+    const { branchId, search, categoryId, page } = query.data;
+    let selectedBranch;
 
     if (branchId) {
-      selectedBranch = await prisma.branch.findUnique({
-        where: { id: branchId },
-        include: { organization: true },
-      });
-    } else if (organizationId) {
       selectedBranch = await prisma.branch.findFirst({
-        where: {
-          organizationId,
-          status: 'ACTIVE',
-          isMain: true,
+        where: { id: branchId, status: 'ACTIVE' },
+        include: {
+          organization: {
+            select: { id: true, name: true, currency: true },
+          },
         },
-        include: { organization: true },
       });
-    }
 
-    if (!selectedBranch) {
+      if (!selectedBranch) {
+        return NextResponse.json({ error: 'Selected pharmacy branch was not found or is inactive.' }, { status: 404 });
+      }
+    } else {
       selectedBranch = await prisma.branch.findFirst({
-        where: { status: 'ACTIVE' },
-        include: { organization: true },
+        where: { status: 'ACTIVE', isMain: true },
+        include: {
+          organization: {
+            select: { id: true, name: true, currency: true },
+          },
+        },
         orderBy: { createdAt: 'asc' },
       });
+
+      if (!selectedBranch) {
+        selectedBranch = await prisma.branch.findFirst({
+          where: { status: 'ACTIVE' },
+          include: {
+            organization: {
+              select: { id: true, name: true, currency: true },
+            },
+          },
+          orderBy: { createdAt: 'asc' },
+        });
+      }
     }
 
     if (!selectedBranch) {
-      return NextResponse.json({ branch: null, medicines: [] });
+      return NextResponse.json({
+        branch: null,
+        branches: [],
+        categories: [],
+        medicines: [],
+        pagination: { page, pageSize: PAGE_SIZE, total: 0, hasMore: false },
+      });
     }
 
-    const medicines = await prisma.medicine.findMany({
-      where: {
-        organizationId: selectedBranch.organizationId,
-        isActive: true,
-        ...(search
-          ? {
-              name: {
-                contains: search,
-                mode: 'insensitive',
-              },
-            }
-          : {}),
-      },
-      include: {
-        category: true,
-        batches: {
-          where: {
-            branchId: selectedBranch.id,
-            status: 'ACTIVE',
-            expiryDate: { gt: new Date() },
+    const medicineWhere = {
+      organizationId: selectedBranch.organizationId,
+      isActive: true,
+      ...(categoryId ? { categoryId } : {}),
+      ...(search
+        ? {
+            OR: [
+              { name: { contains: search, mode: 'insensitive' } },
+              { genericName: { contains: search, mode: 'insensitive' } },
+            ],
+          }
+        : {}),
+    };
+
+    const [medicines, total, categories, branches] = await Promise.all([
+      prisma.medicine.findMany({
+        where: medicineWhere,
+        include: {
+          category: { select: { id: true, name: true } },
+          batches: {
+            where: {
+              branchId: selectedBranch.id,
+              status: 'ACTIVE',
+              expiryDate: { gt: new Date() },
+              quantity: { gt: 0 },
+            },
+            select: { id: true, quantity: true, sellingPrice: true },
+            orderBy: { expiryDate: 'asc' },
           },
-          orderBy: { expiryDate: 'asc' },
         },
-      },
-      orderBy: { name: 'asc' },
-    });
+        orderBy: [{ name: 'asc' }, { id: 'asc' }],
+        skip: (page - 1) * PAGE_SIZE,
+        take: PAGE_SIZE,
+      }),
+      prisma.medicine.count({ where: medicineWhere }),
+      prisma.medicineCategory.findMany({
+        where: {
+          organizationId: selectedBranch.organizationId,
+          medicines: { some: { isActive: true } },
+        },
+        select: { id: true, name: true },
+        orderBy: { name: 'asc' },
+      }),
+      prisma.branch.findMany({
+        where: { organizationId: selectedBranch.organizationId, status: 'ACTIVE' },
+        select: { id: true, name: true, code: true, city: true, address: true },
+        orderBy: [{ isMain: 'desc' }, { name: 'asc' }],
+      }),
+    ]);
 
     const branchMedicines = medicines.map((medicine) => {
-      const activeBatches = medicine.batches.filter((batch) => batch.quantity > 0);
-      const availableStock = activeBatches.reduce((sum, batch) => sum + batch.quantity, 0);
-      const price = activeBatches.length > 0 ? Math.min(...activeBatches.map((batch) => Number(batch.sellingPrice))) : 0;
+      const availableStock = medicine.batches.reduce((sum, batch) => sum + batch.quantity, 0);
+      const price = medicine.batches.length
+        ? Math.min(...medicine.batches.map((batch) => Number(batch.sellingPrice)))
+        : 0;
 
       return {
         id: medicine.id,
@@ -78,25 +132,13 @@ export async function GET(request) {
         strength: medicine.strength,
         description: medicine.description,
         brand: medicine.brand,
+        manufacturer: medicine.manufacturer,
         prescriptionRequired: medicine.prescriptionRequired,
         category: medicine.category,
         price,
         availableStock,
         inStock: availableStock > 0,
-        batches: activeBatches.map((batch) => ({
-          id: batch.id,
-          batchNumber: batch.batchNumber,
-          quantity: batch.quantity,
-          price: Number(batch.sellingPrice),
-          expiryDate: batch.expiryDate,
-        })),
       };
-    });
-
-    const branches = await prisma.branch.findMany({
-      where: { organizationId: selectedBranch.organizationId, status: 'ACTIVE' },
-      select: { id: true, name: true, code: true, city: true, address: true },
-      orderBy: { isMain: 'desc' },
     });
 
     return NextResponse.json({
@@ -106,11 +148,18 @@ export async function GET(request) {
         code: selectedBranch.code,
         city: selectedBranch.city,
         address: selectedBranch.address,
-        organizationId: selectedBranch.organizationId,
         organizationName: selectedBranch.organization.name,
       },
       branches,
+      categories,
+      currency: selectedBranch.organization.currency || 'USD',
       medicines: branchMedicines,
+      pagination: {
+        page,
+        pageSize: PAGE_SIZE,
+        total,
+        hasMore: page * PAGE_SIZE < total,
+      },
     });
   } catch (error) {
     console.error('Customer medicines API error:', error);

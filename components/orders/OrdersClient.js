@@ -5,7 +5,14 @@ import { CheckCircle2, Clock3, PackageCheck, Truck, XCircle, Search } from 'luci
 import { formatCurrency, formatDateTime } from '@/lib/utils';
 import { toast } from 'sonner';
 
-const STATUS_OPTIONS = ['PENDING', 'CONFIRMED', 'PREPARING', 'READY_FOR_DELIVERY', 'DELIVERED', 'CANCELLED'];
+const NEXT_STATUSES = {
+  PENDING: ['CONFIRMED', 'CANCELLED'],
+  CONFIRMED: ['PREPARING', 'CANCELLED'],
+  PREPARING: ['READY_FOR_DELIVERY', 'CANCELLED'],
+  READY_FOR_DELIVERY: ['DELIVERED', 'CANCELLED'],
+  DELIVERED: [],
+  CANCELLED: [],
+};
 
 const statusStyles = {
   PENDING: 'bg-amber-100 text-amber-700',
@@ -131,7 +138,7 @@ export default function OrdersClient({ initialOrders = [], currency = 'USD' }) {
                   {order.branch?.name || 'Selected branch'}
                 </div>
                 <div className="flex flex-wrap gap-2">
-                  {STATUS_OPTIONS.map((status) => (
+                  {[order.status, ...(NEXT_STATUSES[order.status] || [])].map((status) => (
                     <button
                       key={status}
                       disabled={updatingId === order.id || status === order.status}

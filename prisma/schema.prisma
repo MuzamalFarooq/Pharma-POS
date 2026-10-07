@@ -301,6 +301,7 @@ model Customer {
 
   @@index([organizationId, email])
   @@index([organizationId, phone])
+  @@index([userId, organizationId])
 }
 
 model CustomerOrder {
@@ -318,6 +319,8 @@ model CustomerOrder {
   total          Float
   paymentMethod  String               @default("CASH_ON_DELIVERY")
   status         CustomerOrderStatus  @default(PENDING)
+  idempotencyKey String?              @unique
+  stockReserved  Boolean              @default(false)
   createdAt      DateTime             @default(now())
   updatedAt      DateTime             @updatedAt
 
