@@ -8,7 +8,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "seed:admin": "node scripts/create-admin.js"
+    "seed:admin": "node scripts/create-admin.js",
+    "seed:pharmacy1": "node scripts/seed-pharmacy1-medicines.js"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",

@@ -2,6 +2,7 @@
 
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import { AlertCircle, Loader2, MapPin, Minus, Package2, Plus, Search, ShieldCheck, ShoppingCart, Trash2 } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
@@ -424,6 +425,11 @@ export default function CustomerShopPage() {
                 ) : medicines.map((item) => (
                   <article key={item.id} className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden">
                     <div className="p-4 space-y-3">
+                      {item.imageUrl && (
+                        <div className="h-36 rounded-xl bg-slate-50 flex items-center justify-center overflow-hidden">
+                          <Image src={item.imageUrl} alt={item.name} width={240} height={144} className="h-full w-full object-contain" />
+                        </div>
+                      )}
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
                           <h2 className="text-xl font-bold text-slate-900">{item.name}</h2>

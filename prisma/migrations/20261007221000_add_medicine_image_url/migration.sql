@@ -1,0 +1,2 @@
+ALTER TABLE "Medicine"
+ADD COLUMN IF NOT EXISTS "imageUrl" TEXT;

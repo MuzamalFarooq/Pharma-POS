@@ -26,3 +26,7 @@ Pharmacy staff with the existing sales-creation permission manage online orders 
 ## Database migration
 
 The customer-order safety migration adds optional order idempotency keys, a stock-reservation flag, and an index for customer order lookups. It is additive and preserves existing orders. This repository did not previously contain checked-in Prisma migrations, so review and baseline the production database's migration history before applying it with `npx prisma migrate deploy`.
+
+## Pharmacy1 demo catalog
+
+`npm run seed:pharmacy1` adds 100 demo medicines, local illustrative pack images, stock batches, and opening inventory records to the active `MAIN` branch of the `pharmacy1-1259` organization. It is safe to rerun: existing demo SKUs, batches, and inventory records are retained. Use `npm run seed:pharmacy1 -- --dry-run` to check the generated catalog without connecting to the database.

@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { notFound } from 'next/navigation';
 import { ArrowLeft, MapPin, Package2, ShieldCheck } from 'lucide-react';
 import prisma from '@/lib/db';
@@ -60,9 +61,13 @@ export default async function CustomerMedicineDetailsPage({ params, searchParams
       <div className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden">
         <div className="grid grid-cols-1 lg:grid-cols-[1.1fr_1.3fr]">
           <div className="bg-gradient-to-br from-emerald-50 to-slate-100 p-8 flex items-center justify-center min-h-64">
-            <div className="w-52 h-52 rounded-3xl bg-white shadow-inner border border-emerald-100 flex items-center justify-center">
-              <Package2 className="w-20 h-20 text-emerald-600" />
-            </div>
+            {medicine.imageUrl ? (
+              <Image src={medicine.imageUrl} alt={medicine.name} width={480} height={384} className="w-full max-w-sm h-64 object-contain rounded-3xl" />
+            ) : (
+              <div className="w-52 h-52 rounded-3xl bg-white shadow-inner border border-emerald-100 flex items-center justify-center">
+                <Package2 className="w-20 h-20 text-emerald-600" />
+              </div>
+            )}
           </div>
           <div className="p-6 sm:p-8">
             <div className="flex items-center gap-2 text-emerald-600 font-bold uppercase text-[11px] tracking-wider mb-3">

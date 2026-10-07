@@ -133,6 +133,7 @@ export async function GET(request) {
         description: medicine.description,
         brand: medicine.brand,
         manufacturer: medicine.manufacturer,
+        imageUrl: medicine.imageUrl,
         prescriptionRequired: medicine.prescriptionRequired,
         category: medicine.category,
         price,

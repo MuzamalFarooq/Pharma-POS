@@ -198,6 +198,7 @@ model Medicine {
   dosageForm             String?
   strength               String?
   manufacturer           String?
+  imageUrl               String?
   barcode                String?
   sku                    String?
   prescriptionRequired   Boolean      @default(false)
