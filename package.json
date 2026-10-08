@@ -9,7 +9,9 @@
     "start": "next start",
     "lint": "eslint",
     "seed:admin": "node scripts/create-admin.js",
-    "seed:pharmacy1": "node scripts/seed-pharmacy1-medicines.js"
+    "seed:pharmacy1": "node scripts/seed-pharmacy1-medicines.js",
+    "seed:pharmacy": "node scripts/seed-pharmacy1-medicines.js",
+    "seed:lahore": "node scripts/seed-pharmacy1-medicines.js --lahore-pharmacies"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",

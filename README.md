@@ -29,4 +29,6 @@ The customer-order safety migration adds optional order idempotency keys, a stoc
 
 ## Pharmacy1 demo catalog
 
-`npm run seed:pharmacy1` adds 100 demo medicines, local illustrative pack images, stock batches, and opening inventory records to the active `MAIN` branch of the `pharmacy1-1259` organization. It is safe to rerun: existing demo SKUs, batches, and inventory records are retained. Use `npm run seed:pharmacy1 -- --dry-run` to check the generated catalog without connecting to the database.
+`npm run seed:pharmacy1` adds 100 general demo medicines plus 50 section-specific demo medicines for each customer storefront section (350 total), with local illustrative pack images, stock batches, and opening inventory records, to the active `MAIN` branch of the `pharmacy1-1259` organization. It is safe to rerun: existing demo SKUs, batches, and inventory records are retained.
+
+`npm run seed:lahore` creates five independent Lahore demo pharmacy organizations and main branches, each with its own copy of the 350-medicine catalog and stocked inventory. It is safe to rerun. Use `npm run seed:lahore -- --dry-run` to check the catalog without connecting to the database. For a newly registered pharmacy, run `npm run seed:pharmacy -- --organization=<organization-slug>` to add the demo catalog and stock to its active `MAIN` branch; the slug is available from the pharmacy's organization record.

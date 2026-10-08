@@ -6,10 +6,18 @@ const catalogQuerySchema = z.object({
   branchId: z.string().min(1).optional(),
   search: z.string().trim().max(100).optional().default(''),
   categoryId: z.string().min(1).optional(),
+  section: z.enum(['over-the-counter', 'prescribed', 'skin-hair', 'vitamins-supplements', 'women-health']).optional(),
   page: z.coerce.number().int().min(1).max(10000).optional().default(1),
 });
 
 const PAGE_SIZE = 50;
+const sectionCategoryTerms = {
+  'over-the-counter': ['over-the-counter', 'over the counter'],
+  prescribed: ['prescribed', 'prescription'],
+  'skin-hair': ['skin', 'hair', 'topical'],
+  'vitamins-supplements': ['vitamin', 'supplement'],
+  'women-health': ['women', 'woman', 'feminine', 'maternity', 'pregnancy', 'obstetric'],
+};
 
 export async function GET(request) {
   try {
@@ -18,7 +26,7 @@ export async function GET(request) {
       return NextResponse.json({ error: 'Invalid catalog filters' }, { status: 400 });
     }
 
-    const { branchId, search, categoryId, page } = query.data;
+    const { branchId, search, categoryId, section, page } = query.data;
     let selectedBranch;
 
     if (branchId) {
@@ -35,8 +43,20 @@ export async function GET(request) {
         return NextResponse.json({ error: 'Selected pharmacy branch was not found or is inactive.' }, { status: 404 });
       }
     } else {
+      const branchWithAvailableMedicine = {
+        status: 'ACTIVE',
+        batches: {
+          some: {
+            status: 'ACTIVE',
+            expiryDate: { gt: new Date() },
+            quantity: { gt: 0 },
+            medicine: { isActive: true },
+          },
+        },
+      };
+
       selectedBranch = await prisma.branch.findFirst({
-        where: { status: 'ACTIVE', isMain: true },
+        where: { ...branchWithAvailableMedicine, isMain: true },
         include: {
           organization: {
             select: { id: true, name: true, currency: true },
@@ -44,6 +64,30 @@ export async function GET(request) {
         },
         orderBy: { createdAt: 'asc' },
       });
+
+      if (!selectedBranch) {
+        selectedBranch = await prisma.branch.findFirst({
+          where: branchWithAvailableMedicine,
+          include: {
+            organization: {
+              select: { id: true, name: true, currency: true },
+            },
+          },
+          orderBy: { createdAt: 'asc' },
+        });
+      }
+
+      if (!selectedBranch) {
+        selectedBranch = await prisma.branch.findFirst({
+          where: { status: 'ACTIVE', isMain: true },
+          include: {
+            organization: {
+              select: { id: true, name: true, currency: true },
+            },
+          },
+          orderBy: { createdAt: 'asc' },
+        });
+      }
 
       if (!selectedBranch) {
         selectedBranch = await prisma.branch.findFirst({
@@ -68,10 +112,32 @@ export async function GET(request) {
       });
     }
 
+    const categories = await prisma.medicineCategory.findMany({
+      where: {
+        organizationId: selectedBranch.organizationId,
+        medicines: { some: { isActive: true } },
+      },
+      select: { id: true, name: true, description: true },
+      orderBy: { name: 'asc' },
+    });
+
+    const medicineFilters = [];
+    if (categoryId) medicineFilters.push({ categoryId });
+    if (section) {
+      const matchingCategoryIds = categories
+        .filter((category) => {
+          const searchableName = `${category.name} ${category.description || ''}`.toLowerCase();
+          return sectionCategoryTerms[section].some((term) => searchableName.includes(term));
+        })
+        .map((category) => category.id);
+
+      medicineFilters.push({ categoryId: { in: matchingCategoryIds } });
+    }
+
     const medicineWhere = {
       organizationId: selectedBranch.organizationId,
       isActive: true,
-      ...(categoryId ? { categoryId } : {}),
+      ...(medicineFilters.length ? { AND: medicineFilters } : {}),
       ...(search
         ? {
             OR: [
@@ -82,7 +148,7 @@ export async function GET(request) {
         : {}),
     };
 
-    const [medicines, total, categories, branches] = await Promise.all([
+    const [medicines, total, branches] = await Promise.all([
       prisma.medicine.findMany({
         where: medicineWhere,
         include: {
@@ -103,18 +169,27 @@ export async function GET(request) {
         take: PAGE_SIZE,
       }),
       prisma.medicine.count({ where: medicineWhere }),
-      prisma.medicineCategory.findMany({
-        where: {
-          organizationId: selectedBranch.organizationId,
-          medicines: { some: { isActive: true } },
-        },
-        select: { id: true, name: true },
-        orderBy: { name: 'asc' },
-      }),
       prisma.branch.findMany({
-        where: { organizationId: selectedBranch.organizationId, status: 'ACTIVE' },
-        select: { id: true, name: true, code: true, city: true, address: true },
-        orderBy: [{ isMain: 'desc' }, { name: 'asc' }],
+        where: {
+          status: 'ACTIVE',
+          batches: {
+            some: {
+              status: 'ACTIVE',
+              expiryDate: { gt: new Date() },
+              quantity: { gt: 0 },
+              medicine: { isActive: true },
+            },
+          },
+        },
+        select: {
+          id: true,
+          name: true,
+          code: true,
+          city: true,
+          address: true,
+          organization: { select: { name: true } },
+        },
+        orderBy: [{ organization: { name: 'asc' } }, { isMain: 'desc' }, { name: 'asc' }],
       }),
     ]);
 
@@ -151,8 +226,11 @@ export async function GET(request) {
         address: selectedBranch.address,
         organizationName: selectedBranch.organization.name,
       },
-      branches,
-      categories,
+      branches: branches.map(({ organization, ...branch }) => ({
+        ...branch,
+        organizationName: organization.name,
+      })),
+      categories: categories.map(({ id, name }) => ({ id, name })),
       currency: selectedBranch.organization.currency || 'USD',
       medicines: branchMedicines,
       pagination: {

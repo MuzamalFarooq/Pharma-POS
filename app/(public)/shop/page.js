@@ -7,6 +7,7 @@ import { useRouter } from 'next/navigation';
 import { AlertCircle, Loader2, MapPin, Minus, Package2, Plus, Search, ShieldCheck, ShoppingCart, Trash2 } from 'lucide-react';
 import { formatCurrency } from '@/lib/utils';
 import { toast } from 'sonner';
+import MedicineSections from '@/components/customer/MedicineSections';
 
 const readSavedCart = () => {
   try {
@@ -50,6 +51,7 @@ export default function CustomerShopPage() {
   const [currency, setCurrency] = useState('USD');
   const [categories, setCategories] = useState([]);
   const [categoryId, setCategoryId] = useState('');
+  const [selectedSection, setSelectedSection] = useState('');
   const [medicines, setMedicines] = useState([]);
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
@@ -75,6 +77,12 @@ export default function CustomerShopPage() {
       setCatalogError('');
       try {
         const requestedBranchId = new URLSearchParams(window.location.search).get('branchId');
+        const requestedSection = new URLSearchParams(window.location.search).get('section');
+        const validSection = ['over-the-counter', 'prescribed', 'skin-hair', 'vitamins-supplements', 'women-health']
+          .includes(requestedSection)
+          ? requestedSection
+          : '';
+        if (!cancelled) setSelectedSection(validSection);
         const query = requestedBranchId ? `?branchId=${encodeURIComponent(requestedBranchId)}` : '';
         const response = await fetch(`/api/customer/medicines${query}`);
         const data = await response.json();
@@ -149,6 +157,7 @@ export default function CustomerShopPage() {
         const params = new URLSearchParams({ branchId: selectedBranchId, page: String(page) });
         if (search.trim()) params.set('search', search.trim());
         if (categoryId) params.set('categoryId', categoryId);
+        if (selectedSection) params.set('section', selectedSection);
         const response = await fetch(`/api/customer/medicines?${params.toString()}`, { signal: controller.signal });
         const data = await response.json();
         if (!response.ok) throw new Error(data.error || 'Unable to load medicines for this branch.');
@@ -174,7 +183,7 @@ export default function CustomerShopPage() {
       clearTimeout(timer);
       controller.abort();
     };
-  }, [selectedBranchId, search, categoryId, page, refreshToken]);
+  }, [selectedBranchId, search, categoryId, selectedSection, page, refreshToken]);
 
   useEffect(() => {
     if (!cartReady || !selectedBranchId) return;
@@ -223,6 +232,12 @@ export default function CustomerShopPage() {
     setIdempotencyKey('');
     setCheckoutError('');
     setMedicines([]);
+  };
+
+  const selectSection = (section) => {
+    setSelectedSection(section);
+    setCategoryId('');
+    setPage(1);
   };
 
   const addToCart = (item) => {
@@ -364,12 +379,18 @@ export default function CustomerShopPage() {
               className="w-full rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm shadow-sm outline-none focus:ring-2 focus:ring-emerald-500 disabled:opacity-50"
             >
               {pharmacies.map((branch) => (
-                <option key={branch.id} value={branch.id}>{branch.name} · {branch.city || branch.address || 'Main Branch'}</option>
+                <option key={branch.id} value={branch.id}>
+                  {branch.organizationName} · {branch.city || branch.address || branch.name}
+                </option>
               ))}
             </select>
             {pharmacyName && <p className="mt-1 text-xs text-slate-500">{pharmacyName}</p>}
           </div>
         </div>
+      </div>
+
+      <div className="mb-8">
+        <MedicineSections onSelectSection={selectSection} selectedSection={selectedSection} />
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-[1.8fr_0.9fr] gap-6">
@@ -388,7 +409,7 @@ export default function CustomerShopPage() {
             </div>
             <select
               value={categoryId}
-              onChange={(event) => { setCategoryId(event.target.value); setPage(1); }}
+              onChange={(event) => { setCategoryId(event.target.value); setSelectedSection(''); setPage(1); }}
               aria-label="Filter by category"
               className="w-full sm:w-52 rounded-xl border border-slate-300 bg-white px-3 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500 outline-none"
             >

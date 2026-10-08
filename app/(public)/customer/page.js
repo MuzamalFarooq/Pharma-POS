@@ -4,6 +4,7 @@ import { useCallback, useEffect, useState } from 'react';
 import Link from 'next/link';
 import { ArrowRight, Clock3, Loader2, MapPin, PackageCheck, ShoppingBag } from 'lucide-react';
 import { formatCurrency, formatDateTime } from '@/lib/utils';
+import MedicineSections from '@/components/customer/MedicineSections';
 
 const statusStyles = {
   PENDING: 'bg-amber-100 text-amber-700',
@@ -85,6 +86,10 @@ export default function CustomerOrdersPage() {
         <p className="text-sm text-slate-500 mt-1">
           {customerName ? `Welcome, ${customerName}. ` : ''}Track your medicine orders and delivery updates.
         </p>
+      </div>
+
+      <div className="mb-8">
+        <MedicineSections />
       </div>
 
       {accountState === 'loading' || (loadingOrders && orders.length === 0) ? (

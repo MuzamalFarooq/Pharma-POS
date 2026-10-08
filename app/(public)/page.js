@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import MedicineSections from '@/components/customer/MedicineSections';
 import {
   Pill,
   ShoppingCart,
@@ -213,6 +214,10 @@ export default function LandingPage() {
           </div>
         </div>
       </section>
+
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-12">
+        <MedicineSections />
+      </div>
 
       {/* FEATURES SECTION */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
