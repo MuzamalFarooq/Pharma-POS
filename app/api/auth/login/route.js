@@ -3,6 +3,7 @@ import prisma from '@/lib/db';
 import { comparePassword, createSessionToken, setSessionCookie } from '@/lib/auth';
 import { loginSchema } from '@/lib/validations';
 import { logAuditEvent } from '@/lib/tenant';
+import { isPlatformOwnerEmail } from '@/lib/platform-owner';
 
 export async function POST(req) {
   try {
@@ -20,7 +21,6 @@ export async function POST(req) {
       where: { email: identifier },
       include: {
         memberships: {
-          where: { status: 'ACTIVE' },
           include: {
             organization: true,
             branch: true,
@@ -32,11 +32,10 @@ export async function POST(req) {
     if (!user && !identifier.includes('@')) {
       user = await prisma.user.findFirst({
         where: {
-          email: { startsWith: `${identifier}@`, mode: 'insensitive' },
+          email: {           startsWith: `${identifier}@`, mode: 'insensitive' },
         },
         include: {
           memberships: {
-            where: { status: 'ACTIVE' },
             include: {
               organization: true,
               branch: true,
@@ -55,7 +54,30 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
     }
 
-    if (!user.memberships || user.memberships.length === 0) {
+    if (isPlatformOwnerEmail(user.email)) {
+      const token = await createSessionToken({ userId: user.id, role: 'PLATFORM_OWNER' });
+      await setSessionCookie(token);
+
+      return NextResponse.json({
+        success: true,
+        user: { id: user.id, name: user.name, email: user.email },
+        role: 'PLATFORM_OWNER',
+        redirect: '/owner',
+      });
+    }
+
+    const activeMemberships = (user.memberships || []).filter(
+      (membership) => membership.status === 'ACTIVE' && membership.organization.status === 'ACTIVE'
+    );
+
+    if (activeMemberships.length === 0 && user.memberships?.length > 0) {
+      return NextResponse.json(
+        { error: 'This pharmacy is awaiting approval or is not currently active.' },
+        { status: 403 }
+      );
+    }
+
+    if (activeMemberships.length === 0) {
       const token = await createSessionToken({ userId: user.id, role: 'CUSTOMER' });
       await setSessionCookie(token);
 
@@ -67,7 +89,7 @@ export async function POST(req) {
       });
     }
 
-    const activeMembership = user.memberships[0];
+    const activeMembership = activeMemberships[0];
 
     // Find main/default branch
     const branches = await prisma.branch.findMany({

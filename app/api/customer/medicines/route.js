@@ -31,7 +31,7 @@ export async function GET(request) {
 
     if (branchId) {
       selectedBranch = await prisma.branch.findFirst({
-        where: { id: branchId, status: 'ACTIVE' },
+        where: { id: branchId, status: 'ACTIVE', organization: { status: 'ACTIVE' } },
         include: {
           organization: {
             select: { id: true, name: true, currency: true },
@@ -45,6 +45,7 @@ export async function GET(request) {
     } else {
       const branchWithAvailableMedicine = {
         status: 'ACTIVE',
+        organization: { status: 'ACTIVE' },
         batches: {
           some: {
             status: 'ACTIVE',
@@ -79,7 +80,7 @@ export async function GET(request) {
 
       if (!selectedBranch) {
         selectedBranch = await prisma.branch.findFirst({
-          where: { status: 'ACTIVE', isMain: true },
+          where: { status: 'ACTIVE', isMain: true, organization: { status: 'ACTIVE' } },
           include: {
             organization: {
               select: { id: true, name: true, currency: true },
@@ -91,7 +92,7 @@ export async function GET(request) {
 
       if (!selectedBranch) {
         selectedBranch = await prisma.branch.findFirst({
-          where: { status: 'ACTIVE' },
+          where: { status: 'ACTIVE', organization: { status: 'ACTIVE' } },
           include: {
             organization: {
               select: { id: true, name: true, currency: true },
@@ -172,6 +173,7 @@ export async function GET(request) {
       prisma.branch.findMany({
         where: {
           status: 'ACTIVE',
+          organization: { status: 'ACTIVE' },
           batches: {
             some: {
               status: 'ACTIVE',

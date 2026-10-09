@@ -53,8 +53,8 @@ export default function RegisterPage() {
         return;
       }
 
-      toast.success('Pharmacy Organization created successfully!');
-      router.push('/onboarding');
+      toast.success('Registration submitted. Sign in after the platform owner approves your pharmacy.');
+      router.push(data.redirect || '/login');
       router.refresh();
     } catch (error) {
       toast.error('An unexpected error occurred during registration');

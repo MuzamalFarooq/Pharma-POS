@@ -18,6 +18,7 @@ export default async function CustomerMedicineDetailsPage({ params, searchParams
           id: true,
           name: true,
           currency: true,
+          status: true,
           branches: {
             where: {
               status: 'ACTIVE',
@@ -32,7 +33,7 @@ export default async function CustomerMedicineDetailsPage({ params, searchParams
     },
   });
 
-  if (!medicine || !medicine.isActive) notFound();
+  if (!medicine || !medicine.isActive || medicine.organization.status !== 'ACTIVE') notFound();
   const branch = medicine.organization.branches[0];
   if (!branch) notFound();
 

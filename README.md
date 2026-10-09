@@ -27,6 +27,12 @@ Pharmacy staff with the existing sales-creation permission manage online orders 
 
 The customer-order safety migration adds optional order idempotency keys, a stock-reservation flag, and an index for customer order lookups. It is additive and preserves existing orders. This repository did not previously contain checked-in Prisma migrations, so review and baseline the production database's migration history before applying it with `npx prisma migrate deploy`.
 
+## Platform owner access
+
+Set `PHARMA_PLATFORM_OWNER_EMAILS` on the server to a comma-separated allowlist of existing PharmaPulse user email addresses (for example, `owner@example.com`). Only those authenticated accounts can access `/owner`; a pharmacy's `OWNER` membership alone does not grant platform access. Keep this value server-side and do not expose it with a `NEXT_PUBLIC_` prefix.
+
+New pharmacy registrations are held in `PENDING` status without an active membership or session. An allowlisted platform owner can review requests at `/owner/pharmacy-requests`; approving activates the pharmacy and its owner membership, while rejection and suspension prevent pharmacy access. Existing organizations are migrated as `ACTIVE`. Before production deployment, review the migration history and back up the database, then apply the additive migration through the project's normal migration process.
+
 ## Pharmacy1 demo catalog
 
 `npm run seed:pharmacy1` adds 100 general demo medicines plus 50 section-specific demo medicines for each customer storefront section (350 total), with local illustrative pack images, stock batches, and opening inventory records, to the active `MAIN` branch of the `pharmacy1-1259` organization. It is safe to rerun: existing demo SKUs, batches, and inventory records are retained.

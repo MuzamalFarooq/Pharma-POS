@@ -133,6 +133,7 @@ export async function POST(request) {
         where: {
           idempotencyKey,
           customer: { is: { userId: session.user.id } },
+          organization: { status: 'ACTIVE' },
         },
         include: orderInclude,
       });
@@ -147,7 +148,7 @@ export async function POST(request) {
       }
 
       const branch = await tx.branch.findFirst({
-        where: { id: branchId, status: 'ACTIVE' },
+        where: { id: branchId, status: 'ACTIVE', organization: { status: 'ACTIVE' } },
         include: { organization: { select: { id: true } } },
       });
       if (!branch) {
@@ -298,6 +299,7 @@ export async function POST(request) {
         where: {
           idempotencyKey: validated.data.idempotencyKey,
           customer: { is: { userId: session.user.id } },
+          organization: { status: 'ACTIVE' },
         },
         include: orderInclude,
       });

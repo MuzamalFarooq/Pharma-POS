@@ -111,6 +111,12 @@ model Organization {
   trialStart             DateTime?
   trialEnd               DateTime?
   currentPeriodEnd       DateTime?
+  status                 String               @default("ACTIVE")
+  approvedByUserId       String?
+  approvedAt             DateTime?
+  rejectedByUserId       String?
+  rejectedAt             DateTime?
+  rejectionReason        String?
 
   createdAt              DateTime             @default(now())
   updatedAt              DateTime             @updatedAt
@@ -130,6 +136,8 @@ model Organization {
   notifications          Notification[]
   auditLogs              AuditLog[]
   subscriptions          Subscription[]
+
+  @@index([status])
 }
 
 model OrganizationMember {

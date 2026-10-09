@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
 import prisma from '@/lib/db';
-import { hashPassword, createSessionToken, setSessionCookie } from '@/lib/auth';
+import { hashPassword } from '@/lib/auth';
 import { registerSchema } from '@/lib/validations';
 import { logAuditEvent } from '@/lib/tenant';
 
@@ -86,6 +86,7 @@ export async function POST(req) {
           invoicePrefix: `${codePrefix}-INV`,
           subscriptionPlan: 'FREE',
           subscriptionStatus: 'ACTIVE',
+          status: 'PENDING',
         },
       });
 
@@ -108,7 +109,7 @@ export async function POST(req) {
           userId: user.id,
           organizationId: organization.id,
           role: 'OWNER',
-          status: 'ACTIVE',
+          status: 'INVITED',
           branchId: branch.id,
         },
       });
@@ -126,16 +127,6 @@ export async function POST(req) {
       return { user, organization, branch, member };
     });
 
-    // Generate Session Token
-    const token = await createSessionToken({
-      userId: result.user.id,
-      activeOrganizationId: result.organization.id,
-      activeBranchId: result.branch.id,
-      role: 'OWNER',
-    });
-
-    await setSessionCookie(token);
-
     await logAuditEvent({
       organizationId: result.organization.id,
       branchId: result.branch.id,
@@ -148,10 +139,11 @@ export async function POST(req) {
 
     return NextResponse.json({
       success: true,
+      message: 'Registration submitted. Your pharmacy will be available after platform owner approval.',
       user: { id: result.user.id, name: result.user.name, email: result.user.email },
       organization: { id: result.organization.id, name: result.organization.name },
-      redirect: '/onboarding',
-    });
+      redirect: '/login',
+    }, { status: 201 });
   } catch (error) {
     console.error('Registration API Error:', error);
     return NextResponse.json({ error: 'Internal server error during registration' }, { status: 500 });
