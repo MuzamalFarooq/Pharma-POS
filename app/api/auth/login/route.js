@@ -4,6 +4,7 @@ import { comparePassword, createSessionToken, setSessionCookie } from '@/lib/aut
 import { loginSchema } from '@/lib/validations';
 import { logAuditEvent } from '@/lib/tenant';
 import { isPlatformOwnerEmail } from '@/lib/platform-owner';
+import { z } from 'zod';
 
 export async function POST(req) {
   try {
@@ -49,12 +50,17 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
     }
 
+    const isPlatformOwner = isPlatformOwnerEmail(user.email);
+    if (isPlatformOwner && (identifier !== user.email.toLowerCase() || !z.email().safeParse(identifier).success)) {
+      return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
+    }
+
     const isMatch = await comparePassword(password, user.passwordHash);
     if (!isMatch) {
       return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
     }
 
-    if (isPlatformOwnerEmail(user.email)) {
+    if (isPlatformOwner) {
       const token = await createSessionToken({ userId: user.id, role: 'PLATFORM_OWNER' });
       await setSessionCookie(token);
 
