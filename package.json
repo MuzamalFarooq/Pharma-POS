@@ -8,12 +8,14 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
+    "setup:platform-owner": "node scripts/setup-platform-owner.js",
     "seed:admin": "node scripts/create-admin.js",
     "seed:pharmacy1": "node scripts/seed-pharmacy1-medicines.js",
     "seed:pharmacy": "node scripts/seed-pharmacy1-medicines.js",
     "seed:lahore": "node scripts/seed-pharmacy1-medicines.js --lahore-pharmacies"
   },
   "dependencies": {
+    "@next/env": "16.3.6",
     "@hookform/resolvers": "^5.9.1",
     "@neon/config": "^1.8.3",
     "@neon/env": "^1.4.8",

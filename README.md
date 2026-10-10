@@ -29,7 +29,9 @@ The customer-order safety migration adds optional order idempotency keys, a stoc
 
 ## Platform owner access
 
-Set `PHARMA_PLATFORM_OWNER_EMAILS` on the server to a comma-separated allowlist of existing PharmaPulse user email addresses (for example, `owner@example.com`). Only those authenticated accounts can access `/owner`; a pharmacy's `OWNER` membership alone does not grant platform access. Keep this value server-side and do not expose it with a `NEXT_PUBLIC_` prefix.
+Set `PHARMA_PLATFORM_OWNER_EMAIL` and `PHARMA_PLATFORM_OWNER_PASSWORD` in `.env` or the server environment to configure the platform owner login. Optionally set `PHARMA_PLATFORM_OWNER_NAME` for the account name. The password must be at least 12 characters and no more than 72 UTF-8 bytes. Keep these values server-side and do not expose them with a `NEXT_PUBLIC_` prefix.
+
+Run `npm run setup:platform-owner` after setting the variables to create the account or update its password. The command reads `.env`, stores only a bcrypt hash in the database, and can be run again to intentionally apply a changed password. Existing `PHARMA_PLATFORM_OWNER_EMAILS` comma-separated allowlists remain supported; the singular `PHARMA_PLATFORM_OWNER_EMAIL` is also authorized automatically.
 
 New pharmacy registrations are held in `PENDING` status without an active membership or session. An allowlisted platform owner can review requests at `/owner/pharmacy-requests`; approving activates the pharmacy and its owner membership, while rejection and suspension prevent pharmacy access. Existing organizations are migrated as `ACTIVE`. Before production deployment, review the migration history and back up the database, then apply the additive migration through the project's normal migration process.
 
