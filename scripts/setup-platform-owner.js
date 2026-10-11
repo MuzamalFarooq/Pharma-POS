@@ -1,21 +1,33 @@
-import { loadEnvConfig } from '@next/env';
+import nextEnv from '@next/env';
 import bcrypt from 'bcryptjs';
 import { z } from 'zod';
 
+const { loadEnvConfig } = nextEnv;
 loadEnvConfig(process.cwd());
 
 const { PrismaClient } = await import('@prisma/client');
 const prisma = new PrismaClient();
 
 async function main() {
-  const email = process.env.PHARMA_PLATFORM_OWNER_EMAIL?.trim().toLowerCase();
+  const allowedEmails = (process.env.PHARMA_PLATFORM_OWNER_EMAILS || '')
+    .split(',')
+    .map((value) => value.trim().toLowerCase())
+    .filter(Boolean);
+  const email = (
+    process.env.PHARMA_PLATFORM_OWNER_EMAIL?.trim()
+    || (allowedEmails.length === 1 ? allowedEmails[0] : '')
+  ).toLowerCase();
   const password = process.env.PHARMA_PLATFORM_OWNER_PASSWORD;
   const name = process.env.PHARMA_PLATFORM_OWNER_NAME?.trim() || 'Platform Owner';
 
-  if (!email || !password) {
+  if (!email) {
     throw new Error(
-      'Set PHARMA_PLATFORM_OWNER_EMAIL and PHARMA_PLATFORM_OWNER_PASSWORD in .env or the server environment.'
+      'Set PHARMA_PLATFORM_OWNER_EMAIL or configure exactly one address in PHARMA_PLATFORM_OWNER_EMAILS.'
     );
+  }
+
+  if (!password) {
+    throw new Error('Set PHARMA_PLATFORM_OWNER_PASSWORD in .env or the server environment.');
   }
 
   if (!z.email().safeParse(email).success) {

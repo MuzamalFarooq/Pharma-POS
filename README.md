@@ -25,13 +25,13 @@ Pharmacy staff with the existing sales-creation permission manage online orders 
 
 ## Database migration
 
-The customer-order safety migration adds optional order idempotency keys, a stock-reservation flag, and an index for customer order lookups. It is additive and preserves existing orders. This repository did not previously contain checked-in Prisma migrations, so review and baseline the production database's migration history before applying it with `npx prisma migrate deploy`.
+The Prisma migrations include a baseline for the existing schema and additive customer-order and platform-approval changes. The customer-order migration creates the order tables when missing, adds optional order idempotency keys and stock-reservation state, and creates customer/order indexes without removing existing data or unrelated tables. Back up the database and review its migration history before applying migrations with `npx prisma migrate deploy`.
 
 ## Platform owner access
 
 Set `PHARMA_PLATFORM_OWNER_EMAIL` and `PHARMA_PLATFORM_OWNER_PASSWORD` in `.env` or the server environment to configure the platform owner login. Optionally set `PHARMA_PLATFORM_OWNER_NAME` for the account name. The password must be at least 12 characters and no more than 72 UTF-8 bytes. Keep these values server-side and do not expose them with a `NEXT_PUBLIC_` prefix.
 
-Run `npm run setup:platform-owner` after setting the variables to create the account or update its password. The command reads `.env`, stores only a bcrypt hash in the database, and can be run again to intentionally apply a changed password. Existing `PHARMA_PLATFORM_OWNER_EMAILS` comma-separated allowlists remain supported; the singular `PHARMA_PLATFORM_OWNER_EMAIL` is also authorized automatically.
+Run `npm run setup:platform-owner` after setting the variables to create the account or update its password. The command reads `.env`, stores only a bcrypt hash in the database, and can be run again to intentionally apply a changed password. Existing `PHARMA_PLATFORM_OWNER_EMAILS` comma-separated allowlists remain supported; when it contains exactly one address and the singular `PHARMA_PLATFORM_OWNER_EMAIL` is unset, that address is used to set up the owner account. Set the singular variable explicitly when the allowlist contains multiple addresses. The singular `PHARMA_PLATFORM_OWNER_EMAIL` is also authorized automatically.
 
 New pharmacy registrations are held in `PENDING` status without an active membership or session. An allowlisted platform owner can review requests at `/owner/pharmacy-requests`; approving activates the pharmacy and its owner membership, while rejection and suspension prevent pharmacy access. Existing organizations are migrated as `ACTIVE`. Before production deployment, review the migration history and back up the database, then apply the additive migration through the project's normal migration process.
 
