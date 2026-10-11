@@ -61,7 +61,11 @@ export async function POST(req) {
     }
 
     if (isPlatformOwner) {
-      const token = await createSessionToken({ userId: user.id, role: 'PLATFORM_OWNER' });
+      const token = await createSessionToken({
+        userId: user.id,
+        role: 'PLATFORM_OWNER',
+        tokenVersion: user.passwordVersion || 1,
+      });
       await setSessionCookie(token);
 
       return NextResponse.json({
@@ -84,7 +88,11 @@ export async function POST(req) {
     }
 
     if (activeMemberships.length === 0) {
-      const token = await createSessionToken({ userId: user.id, role: 'CUSTOMER' });
+      const token = await createSessionToken({
+        userId: user.id,
+        role: 'CUSTOMER',
+        tokenVersion: user.passwordVersion || 1,
+      });
       await setSessionCookie(token);
 
       return NextResponse.json({
@@ -108,6 +116,7 @@ export async function POST(req) {
       activeOrganizationId: activeMembership.organizationId,
       activeBranchId: activeBranch?.id || null,
       role: activeMembership.role,
+      tokenVersion: user.passwordVersion || 1,
     });
 
     await setSessionCookie(token);
