@@ -3,7 +3,7 @@ import prisma from '@/lib/db';
 import { comparePassword, createSessionToken, setSessionCookie } from '@/lib/auth';
 import { loginSchema } from '@/lib/validations';
 import { logAuditEvent } from '@/lib/tenant';
-import { isPlatformOwnerEmail } from '@/lib/platform-owner';
+import { getPlatformOwnerConfig, isPlatformOwnerEmail, verifyPlatformOwnerCredentials } from '@/lib/platform-owner';
 import { z } from 'zod';
 
 export async function POST(req) {
@@ -16,10 +16,42 @@ export async function POST(req) {
     }
 
     const { email, password } = validated.data;
-    const identifier = email.toLowerCase().trim();
+    const identifier = email.trim();
+    const normalizedEmail = identifier.toLowerCase();
+    const { email: configuredOwnerEmail, emails: configuredOwnerEmails, name: configuredOwnerName, password: configuredOwnerPassword } = getPlatformOwnerConfig();
+
+    if (configuredOwnerEmails.length > 0 && configuredOwnerEmails.includes(normalizedEmail)) {
+      if (!configuredOwnerPassword) {
+        return NextResponse.json({ error: 'Platform owner authentication is not configured.' }, { status: 500 });
+      }
+
+      const isOwnerMatch = verifyPlatformOwnerCredentials(identifier, password);
+      if (!isOwnerMatch) {
+        return NextResponse.json({ error: 'Incorrect email or password.' }, { status: 401 });
+      }
+
+      const token = await createSessionToken({
+        userId: `platform-owner:${configuredOwnerEmail || normalizedEmail}`,
+        role: 'PLATFORM_OWNER',
+        platformOwner: true,
+        name: configuredOwnerName,
+      });
+      await setSessionCookie(token);
+
+      return NextResponse.json({
+        success: true,
+        user: { id: `platform-owner:${configuredOwnerEmail || normalizedEmail}`, name: configuredOwnerName, email: configuredOwnerEmail || normalizedEmail },
+        role: 'PLATFORM_OWNER',
+        redirect: '/owner',
+      });
+    }
+
+    if (configuredOwnerEmails.length === 0 && configuredOwnerPassword) {
+      return NextResponse.json({ error: 'Platform owner authentication is not configured. Set PHARMA_PLATFORM_OWNER_EMAIL and PHARMA_PLATFORM_OWNER_PASSWORD in the server environment.' }, { status: 500 });
+    }
 
     let user = await prisma.user.findUnique({
-      where: { email: identifier },
+      where: { email: normalizedEmail },
       include: {
         memberships: {
           include: {
@@ -30,10 +62,10 @@ export async function POST(req) {
       },
     });
 
-    if (!user && !identifier.includes('@')) {
+    if (!user && !normalizedEmail.includes('@')) {
       user = await prisma.user.findFirst({
         where: {
-          email: {           startsWith: `${identifier}@`, mode: 'insensitive' },
+          email: { startsWith: `${normalizedEmail}@`, mode: 'insensitive' },
         },
         include: {
           memberships: {
@@ -47,17 +79,17 @@ export async function POST(req) {
     }
 
     if (!user) {
-      return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
+      return NextResponse.json({ error: 'Incorrect email or password.' }, { status: 401 });
     }
 
     const isPlatformOwner = isPlatformOwnerEmail(user.email);
-    if (isPlatformOwner && (identifier !== user.email.toLowerCase() || !z.email().safeParse(identifier).success)) {
-      return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
+    if (isPlatformOwner && (normalizedEmail !== user.email.toLowerCase() || !z.email().safeParse(normalizedEmail).success)) {
+      return NextResponse.json({ error: 'Incorrect email or password.' }, { status: 401 });
     }
 
     const isMatch = await comparePassword(password, user.passwordHash);
     if (!isMatch) {
-      return NextResponse.json({ error: 'Invalid email or password' }, { status: 401 });
+      return NextResponse.json({ error: 'Incorrect email or password.' }, { status: 401 });
     }
 
     if (isPlatformOwner) {
@@ -105,7 +137,6 @@ export async function POST(req) {
 
     const activeMembership = activeMemberships[0];
 
-    // Find main/default branch
     const branches = await prisma.branch.findMany({
       where: { organizationId: activeMembership.organizationId, status: 'ACTIVE' },
     });
