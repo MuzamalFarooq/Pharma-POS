@@ -145,7 +145,7 @@ export default async function DashboardPage() {
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-5">
         <div className="bg-white p-4 sm:p-5 rounded-2xl border border-slate-200 shadow-sm space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Today's Revenue</span>
+            <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider">Today&apos;s Revenue</span>
             <div className="p-2 rounded-xl bg-emerald-50 text-emerald-600">
               <DollarSign className="w-5 h-5" />
             </div>

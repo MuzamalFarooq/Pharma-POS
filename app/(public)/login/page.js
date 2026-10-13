@@ -146,7 +146,7 @@ export default function LoginPage() {
         </div>
 
         <div className="text-center text-xs text-slate-500">
-          Don't have a pharmacy account?{' '}
+          Don&apos;t have a pharmacy account?{' '}
           <Link href="/register" className="font-bold text-emerald-600 hover:underline">
             Register your pharmacy
           </Link>

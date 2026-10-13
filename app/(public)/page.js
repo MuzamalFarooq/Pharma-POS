@@ -157,7 +157,7 @@ export default function LandingPage() {
               {/* Mock Metrics Row */}
               <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
                 <div className="bg-slate-800/80 p-3.5 sm:p-4 rounded-lg border border-slate-700/60">
-                  <span className="text-xs text-slate-400 font-medium">Today's Revenue</span>
+                  <span className="text-xs text-slate-400 font-medium">Today&apos;s Revenue</span>
                   <div className="text-xl sm:text-2xl font-bold text-emerald-400 mt-1">$2,840.50</div>
                   <span className="text-[10px] text-emerald-500 font-semibold">+14% vs yesterday</span>
                 </div>
@@ -397,7 +397,7 @@ export default function LandingPage() {
           <div className="grid md:grid-cols-2 gap-6">
             <div className="bg-white p-6 rounded-xl border border-slate-200 space-y-3">
               <p className="text-sm text-slate-600 italic">
-                "PharmaPulse eliminated our expiry waste completely. The batch tracking alerts us weeks before medicines expire so we can discount or return them to suppliers."
+                &ldquo;PharmaPulse eliminated our expiry waste completely. The batch tracking alerts us weeks before medicines expire so we can discount or return them to suppliers.&rdquo;
               </p>
               <div className="flex items-center gap-3 pt-2">
                 <div className="w-9 h-9 rounded-full bg-emerald-100 text-emerald-700 font-bold flex items-center justify-center text-xs">
@@ -411,7 +411,7 @@ export default function LandingPage() {
             </div>
             <div className="bg-white p-6 rounded-xl border border-slate-200 space-y-3">
               <p className="text-sm text-slate-600 italic">
-                "The POS checkout is lightning fast. Our cashiers scan barcodes and generate printed tax invoices in less than 5 seconds per customer."
+                &ldquo;The POS checkout is lightning fast. Our cashiers scan barcodes and generate printed tax invoices in less than 5 seconds per customer.&rdquo;
               </p>
               <div className="flex items-center gap-3 pt-2">
                 <div className="w-9 h-9 rounded-full bg-teal-100 text-teal-700 font-bold flex items-center justify-center text-xs">

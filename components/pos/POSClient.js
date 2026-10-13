@@ -244,7 +244,7 @@ export default function POSClient({ initialMedicines = [], initialCustomers = []
             {filteredMedicines.length === 0 ? (
               <div className="col-span-full py-16 text-center text-slate-400 space-y-2">
                 <Pill className="w-10 h-10 mx-auto text-slate-300" />
-                <p className="text-sm font-semibold">No active medicines found matching "{searchTerm}"</p>
+                <p className="text-sm font-semibold">No active medicines found matching &ldquo;{searchTerm}&rdquo;</p>
               </div>
             ) : (
               filteredMedicines.map((med) => {
@@ -358,7 +358,7 @@ export default function POSClient({ initialMedicines = [], initialCustomers = []
           {cart.length === 0 ? (
             <div className="h-full flex flex-col items-center justify-center text-slate-400 text-xs py-12 space-y-2">
               <ShoppingCart className="w-10 h-10 text-slate-200" />
-              <p>Cart is empty. Click "+ Add" on medicines.</p>
+              <p>Cart is empty. Click &ldquo;+ Add&rdquo; on medicines.</p>
             </div>
           ) : (
             cart.map((item) => (

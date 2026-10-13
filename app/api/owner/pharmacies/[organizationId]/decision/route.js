@@ -116,19 +116,50 @@ export async function POST(request, { params }) {
         });
       }
 
-      await tx.auditLog.create({
+      let auditUserId = session.user.id;
+      if (auditUserId.startsWith('platform-owner:')) {
+        const dbUser = await tx.user.findFirst({
+          where: { email: { equals: session.user.email, mode: 'insensitive' } },
+          select: { id: true },
+        });
+        if (dbUser) auditUserId = dbUser.id;
+      }
+
+      if (!auditUserId.startsWith('platform-owner:')) {
+        await tx.auditLog.create({
+          data: {
+            organizationId,
+            userId: auditUserId,
+            action: transition.auditAction,
+            entity: 'Organization',
+            entityId: organizationId,
+            metadata: JSON.stringify({
+              pharmacyName: pharmacy.name,
+              from: transition.from,
+              to: transition.to,
+              ...(action === 'REJECT' ? { rejectionReason: rejectionReason || null } : {}),
+            }),
+          },
+        });
+      }
+
+      await tx.platformAuditLog.create({
         data: {
-          organizationId,
-          userId: session.user.id,
           action: transition.auditAction,
-          entity: 'Organization',
+          actorType: 'PLATFORM_OWNER',
+          actorEmail: session.user.email,
+          actorName: session.user.name || 'Platform Owner',
+          entityType: 'ORGANIZATION',
           entityId: organizationId,
-          metadata: JSON.stringify({
+          organizationId,
+          details: JSON.stringify({
             pharmacyName: pharmacy.name,
             from: transition.from,
             to: transition.to,
+            action,
             ...(action === 'REJECT' ? { rejectionReason: rejectionReason || null } : {}),
           }),
+          status: 'SUCCESS',
         },
       });
 
