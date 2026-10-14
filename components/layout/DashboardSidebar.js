@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import {
   LayoutDashboard,
@@ -56,17 +57,22 @@ export default function DashboardSidebar({ userRole, isOpen = false, onClose }) 
     >
       {/* Brand Header */}
       <div className="h-16 px-4 sm:px-5 flex items-center justify-between border-b border-slate-800 gap-3">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-linear-to-tr from-emerald-500 to-teal-400 flex items-center justify-center text-slate-950 font-black shadow-md shadow-emerald-500/20">
-            <Pill className="w-5 h-5" />
-          </div>
+        <Link href="/dashboard" className="flex items-center gap-3 group">
+          <Image
+            src="/icon.svg"
+            alt="PharmaPulse Logo"
+            width={36}
+            height={36}
+            className="w-9 h-9 rounded-xl shadow-md shadow-emerald-500/20 shrink-0 group-hover:scale-105 transition-transform"
+            priority
+          />
           <div>
             <span className="font-extrabold text-base text-white tracking-tight block leading-none">
               PharmaPulse
             </span>
             <span className="text-[10px] text-emerald-400 font-semibold tracking-wider uppercase">Cloud SaaS Platform</span>
           </div>
-        </div>
+        </Link>
 
         {/* Mobile Close Button */}
         <button

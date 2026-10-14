@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   Activity,
@@ -108,10 +109,15 @@ export default function OwnerShell({ user, hasPharmacyAccess, children }) {
         }`}
       >
         <div className="flex h-16 shrink-0 items-center justify-between border-b border-slate-800 px-5">
-          <Link href="/owner" className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-linear-to-tr from-emerald-500 to-teal-400 text-slate-950 shadow-sm shadow-emerald-500/20">
-              <Pill className="h-5 w-5" />
-            </div>
+          <Link href="/owner" className="flex items-center gap-3 group">
+            <Image
+              src="/icon.svg"
+              alt="PharmaPulse Logo"
+              width={36}
+              height={36}
+              className="h-9 w-9 rounded-xl shadow-sm shadow-emerald-500/20 shrink-0 group-hover:scale-105 transition-transform"
+              priority
+            />
             <div>
               <span className="block text-sm font-extrabold tracking-tight text-white">PharmaPulse</span>
               <span className="mt-0.5 block text-[10px] font-bold uppercase tracking-wider text-emerald-400">
