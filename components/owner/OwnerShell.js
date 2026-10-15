@@ -8,6 +8,7 @@ import {
   Activity,
   BarChart3,
   Bell,
+  BookOpen,
   Building2,
   ChevronDown,
   DollarSign,
@@ -49,6 +50,7 @@ const navGroups = [
     title: 'Commerce & Oversight',
     items: [
       { label: 'Finance & Revenue', href: '/owner/finance', icon: DollarSign },
+      { label: 'Global Medicine Catalog', href: '/owner/global-catalog', icon: BookOpen },
       { label: 'Products & Inventory', href: '/owner/products', icon: Pill },
       { label: 'Support & Disputes', href: '/owner/support', icon: LifeBuoy },
       { label: 'Reports & Analytics', href: '/owner/reports', icon: BarChart3 },

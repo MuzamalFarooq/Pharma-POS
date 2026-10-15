@@ -1,6 +1,6 @@
 import Link from 'next/link';
 import { redirect } from 'next/navigation';
-import { AlertCircle, Clock, Package, Pill, Search, ShieldAlert, SlidersHorizontal } from 'lucide-react';
+import { AlertCircle, BookOpen, Clock, Package, Pill, Search, ShieldAlert, SlidersHorizontal } from 'lucide-react';
 import prisma from '@/lib/db';
 import { getPlatformOwnerSession } from '@/lib/platform-owner';
 import { formatCurrency, formatDateTime, calculateExpiryStatus } from '@/lib/utils';
@@ -76,6 +76,14 @@ export default async function ProductsPage({ searchParams }) {
         description="Inspect registered medicines, inventory stock levels, batch expiries, and pricing compliance across all pharmacies."
         icon={Pill}
         badge={`${totalCount} Medicines`}
+        actions={
+          <Link
+            href="/owner/global-catalog"
+            className="inline-flex items-center gap-2 rounded-xl bg-emerald-600 px-3.5 py-2 text-xs font-bold text-white shadow-sm hover:bg-emerald-700 transition"
+          >
+            <BookOpen className="h-4 w-4" /> Global Medicine Catalog
+          </Link>
+        }
       />
 
       {/* Filter and Search Bar */}

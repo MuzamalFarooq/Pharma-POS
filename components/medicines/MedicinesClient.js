@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { Pill, Plus, Search, Filter, X, Edit, Layers, Loader2 } from 'lucide-react';
+import { Pill, Plus, Search, Filter, X, Edit, Layers, Loader2, Sparkles, BookOpen, Check } from 'lucide-react';
 import { toast } from 'sonner';
 
 export default function MedicinesClient({ initialMedicines = [], categories = [] }) {
@@ -10,12 +10,16 @@ export default function MedicinesClient({ initialMedicines = [], categories = []
   const [selectedCategory, setSelectedCategory] = useState('ALL');
   const [showAddModal, setShowAddModal] = useState(false);
   const [submitting, setSubmitting] = useState(false);
+  const [globalQuery, setGlobalQuery] = useState('');
+  const [globalMatches, setGlobalMatches] = useState([]);
+  const [isSearchingGlobal, setIsSearchingGlobal] = useState(false);
 
   const [formData, setFormData] = useState({
     name: '',
     genericName: '',
     brand: '',
     categoryId: '',
+    globalMedicineId: null,
     dosageForm: 'Capsule',
     strength: '500mg',
     manufacturer: '',
@@ -62,6 +66,7 @@ export default function MedicinesClient({ initialMedicines = [], categories = []
         genericName: '',
         brand: '',
         categoryId: '',
+        globalMedicineId: null,
         dosageForm: 'Capsule',
         strength: '',
         manufacturer: '',
@@ -74,6 +79,51 @@ export default function MedicinesClient({ initialMedicines = [], categories = []
       toast.error('An error occurred');
       setSubmitting(false);
     }
+  };
+
+  const handleSearchGlobal = async (query) => {
+    setGlobalQuery(query);
+    if (!query || query.trim().length < 2) {
+      setGlobalMatches([]);
+      return;
+    }
+    setIsSearchingGlobal(true);
+    try {
+      const res = await fetch(`/api/medicines/global-search?q=${encodeURIComponent(query.trim())}`);
+      const data = await res.json();
+      if (res.ok && data.items) {
+        setGlobalMatches(data.items);
+      }
+    } catch {
+      // silent
+    } finally {
+      setIsSearchingGlobal(false);
+    }
+  };
+
+  const handleSelectGlobalMedicine = (item) => {
+    const matchedCategory = categories.find(
+      (c) => c.name.toLowerCase() === (item.category || '').toLowerCase()
+    );
+
+    setFormData((prev) => ({
+      ...prev,
+      name: item.name || prev.name,
+      genericName: item.genericName || prev.genericName,
+      brand: item.brand || prev.brand,
+      categoryId: matchedCategory ? matchedCategory.id : prev.categoryId,
+      dosageForm: item.dosageForm || prev.dosageForm,
+      strength: item.strength || prev.strength,
+      manufacturer: item.manufacturer || prev.manufacturer,
+      barcode: item.barcode || prev.barcode,
+      sku: item.sku || prev.sku,
+      prescriptionRequired: Boolean(item.prescriptionRequired),
+      description: item.description || prev.description,
+      globalMedicineId: item.id,
+    }));
+    setGlobalMatches([]);
+    setGlobalQuery('');
+    toast.success(`Autofilled details from Global Catalog for "${item.name}"`);
   };
 
   return (
@@ -184,6 +234,47 @@ export default function MedicinesClient({ initialMedicines = [], categories = []
               <button onClick={() => setShowAddModal(false)} className="text-slate-400 hover:text-slate-600">
                 <X className="w-5 h-5" />
               </button>
+            </div>
+
+            {/* Quick Search & Autofill from Global Medicine Catalog */}
+            <div className="rounded-xl border border-emerald-200 bg-emerald-50/70 p-3 space-y-2">
+              <div className="flex items-center gap-1.5 text-emerald-800 font-bold text-xs">
+                <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+                <span>Autofill from Global Medicine Catalog</span>
+              </div>
+              <div className="relative">
+                <Search className="w-3.5 h-3.5 text-slate-400 absolute left-2.5 top-2.5" />
+                <input
+                  type="text"
+                  value={globalQuery}
+                  onChange={(e) => handleSearchGlobal(e.target.value)}
+                  placeholder="Search standard medicine or barcode to autofill..."
+                  className="w-full pl-8 pr-3 py-1.5 text-xs rounded-lg border border-emerald-300 bg-white outline-none focus:ring-2 focus:ring-emerald-500"
+                />
+                {isSearchingGlobal && (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin text-emerald-600 absolute right-2.5 top-2" />
+                )}
+              </div>
+              {globalMatches.length > 0 && (
+                <div className="max-h-36 overflow-y-auto divide-y divide-emerald-100 rounded-lg border border-emerald-200 bg-white shadow-xs">
+                  {globalMatches.map((gm) => (
+                    <button
+                      key={gm.id}
+                      type="button"
+                      onClick={() => handleSelectGlobalMedicine(gm)}
+                      className="w-full text-left px-2.5 py-1.5 hover:bg-emerald-50 text-[11px] flex items-center justify-between transition"
+                    >
+                      <div>
+                        <span className="font-bold text-slate-900">{gm.name}</span>
+                        <span className="text-slate-500 ml-1">({gm.genericName || gm.dosageForm || 'Standard'})</span>
+                      </div>
+                      <span className="text-[10px] text-emerald-700 font-bold bg-emerald-100 px-1.5 py-0.5 rounded">
+                        Autofill
+                      </span>
+                    </button>
+                  ))}
+                </div>
+              )}
             </div>
 
             <form onSubmit={handleAddMedicine} className="space-y-4 text-xs">

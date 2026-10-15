@@ -222,6 +222,7 @@ model Medicine {
   id                     String       @id @default(cuid())
   organizationId         String
   categoryId             String?
+  globalMedicineId       String?
   name                   String
   genericName            String?
   brand                  String?
@@ -239,11 +240,14 @@ model Medicine {
 
   organization           Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   category               MedicineCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+  globalMedicine         GlobalMedicine? @relation(fields: [globalMedicineId], references: [id], onDelete: SetNull)
   batches                MedicineBatch[]
   inventoryTransactions  InventoryTransaction[]
   purchaseItems          PurchaseItem[]
   saleItems              SaleItem[]
   customerOrderItems     CustomerOrderItem[]
+
+  @@index([globalMedicineId])
 }
 
 model Supplier {
@@ -631,4 +635,34 @@ model ComplianceRecord {
 
   @@index([organizationId])
   @@index([status])
+}
+
+model GlobalMedicine {
+  id                   String       @id @default(cuid())
+  name                 String
+  genericName          String?
+  brand                String?
+  category             String?
+  dosageForm           String?
+  strength             String?
+  manufacturer         String?
+  imageUrl             String?
+  barcode              String?      @unique
+  sku                  String?      @unique
+  prescriptionRequired Boolean      @default(false)
+  standardPrice        Float?
+  packageSize          String?
+  description          String?
+  sideEffects          String?
+  storageConditions    String?
+  isActive             Boolean      @default(true)
+  createdAt            DateTime     @default(now())
+  updatedAt            DateTime     @updatedAt
+
+  medicines            Medicine[]
+
+  @@index([name])
+  @@index([genericName])
+  @@index([category])
+  @@index([isActive])
 }
