@@ -63,11 +63,6 @@ export async function POST(req) {
       return NextResponse.json(genericResponse);
     }
 
-    // Ensure account uses password authentication
-    if (!user.passwordHash) {
-      return NextResponse.json(genericResponse);
-    }
-
     // Invalidate any previously issued unused tokens for this user
     await prisma.passwordResetToken.updateMany({
       where: {

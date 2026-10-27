@@ -87,6 +87,13 @@ export async function POST(req) {
       return NextResponse.json({ error: 'Incorrect email or password.' }, { status: 401 });
     }
 
+    if (!user.passwordHash) {
+      return NextResponse.json(
+        { error: 'This account was registered with Google. Please use Continue with Google or reset your password.' },
+        { status: 400 }
+      );
+    }
+
     const isMatch = await comparePassword(password, user.passwordHash);
     if (!isMatch) {
       return NextResponse.json({ error: 'Incorrect email or password.' }, { status: 401 });

@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { ArrowRight, Eye, EyeOff, Lock, Mail, Pill, User, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import GoogleAuthButton from '@/components/auth/GoogleAuthButton';
 
 export default function CustomerRegisterPage() {
   const router = useRouter();
@@ -149,6 +150,17 @@ export default function CustomerRegisterPage() {
             {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <>Create customer account <ArrowRight className="w-4 h-4" /></>}
           </button>
         </form>
+
+        <div className="relative my-4">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-slate-200" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-white px-3 text-slate-400 font-semibold tracking-wider">Or continue with</span>
+          </div>
+        </div>
+
+        <GoogleAuthButton returnTo="/customer" text="Continue with Google" />
 
         <div className="text-center text-xs text-slate-500">
           Already have an account?{' '}

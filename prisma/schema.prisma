@@ -77,19 +77,35 @@ model User {
   id            String               @id @default(cuid())
   name          String
   email         String               @unique
-  passwordHash  String
+  passwordHash  String?
   avatar        String?
   passwordVersion Int                @default(1)
   passwordChangedAt DateTime?
   createdAt     DateTime             @default(now())
   updatedAt     DateTime             @updatedAt
 
+  accounts      Account[]
   memberships   OrganizationMember[]
   auditLogs     AuditLog[]
   createdPurchases Purchase[]        @relation("PurchaseCreatedBy")
   processedSales   Sale[]            @relation("SaleCashier")
   passwordResetTokens PasswordResetToken[]
 }
+
+model Account {
+  id                String   @id @default(cuid())
+  userId            String
+  provider          String
+  providerAccountId String
+  createdAt         DateTime @default(now())
+  updatedAt         DateTime @updatedAt
+
+  user              User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+  @@index([userId])
+}
+
 
 model PasswordResetToken {
   id        String    @id @default(cuid())

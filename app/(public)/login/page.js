@@ -1,10 +1,36 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, Suspense } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Pill, Eye, EyeOff, Lock, Mail, ArrowRight, Loader2 } from 'lucide-react';
 import { toast } from 'sonner';
+import GoogleAuthButton from '@/components/auth/GoogleAuthButton';
+
+function OAuthFeedbackListener() {
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const error = searchParams.get('error');
+    const info = searchParams.get('info');
+
+    if (info === 'google_cancelled') {
+      toast.info('Google sign-in was cancelled.');
+    } else if (error === 'google_not_configured') {
+      toast.error('Google Sign-In is not configured yet on this server. Please contact administrator.');
+    } else if (error === 'unverified_email') {
+      toast.error('Your Google email address is not verified. Please verify your Google account.');
+    } else if (error === 'pending_approval') {
+      toast.error('This pharmacy account is awaiting approval by the platform owner.');
+    } else if (error === 'state_mismatch' || error === 'invalid_state') {
+      toast.error('Security state verification failed. Please try signing in again.');
+    } else if (error) {
+      toast.error(`Authentication error: ${error.replace(/_/g, ' ')}`);
+    }
+  }, [searchParams]);
+
+  return null;
+}
 
 export default function LoginPage() {
   const router = useRouter();
@@ -52,6 +78,9 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center py-6 sm:py-12 px-3.5 sm:px-6 lg:px-8 w-full max-w-full">
+      <Suspense fallback={null}>
+        <OAuthFeedbackListener />
+      </Suspense>
       <div className="max-w-md w-full space-y-6 sm:space-y-8 bg-white p-5 sm:p-8 rounded-2xl border border-slate-200 shadow-xl">
         <div className="text-center space-y-2">
           <div className="w-12 h-12 rounded-xl bg-emerald-600 text-white flex items-center justify-center mx-auto shadow-md shadow-emerald-600/20">
@@ -114,6 +143,17 @@ export default function LoginPage() {
             {loading ? <Loader2 className="w-5 h-5 animate-spin" /> : <>Sign In <ArrowRight className="w-4 h-4" /></>}
           </button>
         </form>
+
+        <div className="relative my-4">
+          <div className="absolute inset-0 flex items-center">
+            <div className="w-full border-t border-slate-200" />
+          </div>
+          <div className="relative flex justify-center text-xs uppercase">
+            <span className="bg-white px-3 text-slate-400 font-semibold tracking-wider">Or continue with</span>
+          </div>
+        </div>
+
+        <GoogleAuthButton text="Continue with Google" />
 
         {/* DEMO SEED CREDENTIAL PRESETS */}
         <div className="pt-4 border-t border-slate-100 space-y-2">
